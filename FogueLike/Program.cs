@@ -7,7 +7,7 @@ namespace FogueLike
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Hey!");
+            World w = new World();
         }
     }
 }

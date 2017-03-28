@@ -1,0 +1,5 @@
+C:\Users\isenseed\Source\Repos\FogueLike\FogueLike\bin\Debug\FogueLike.exe
+C:\Users\isenseed\Source\Repos\FogueLike\FogueLike\bin\Debug\FogueLike.pdb
+C:\Users\isenseed\Source\Repos\FogueLike\FogueLike\obj\Debug\FogueLike.csprojResolveAssemblyReference.cache
+C:\Users\isenseed\Source\Repos\FogueLike\FogueLike\obj\Debug\FogueLike.exe
+C:\Users\isenseed\Source\Repos\FogueLike\FogueLike\obj\Debug\FogueLike.pdb
