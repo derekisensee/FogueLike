@@ -8,7 +8,7 @@ namespace FogueLike
 {
     public class Player
     {
-        struct Point
+        public struct Point
         {
             private int x; private int y;
             public int X
@@ -35,10 +35,13 @@ namespace FogueLike
                 }
             }
         } // player's location
+        public Point position;
 
         public Player(int x, int y)
         {
-
+            position = new Point();
+            position.X = 30;
+            position.Y = 20;
         }
     }
 }
