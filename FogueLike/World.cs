@@ -10,6 +10,34 @@ namespace FogueLike
     public class World
     {
         String[,] Map;
+        List<Point> UsedPoints;
+        struct Point
+        {
+            private int x;
+            private int y;
+            public int X
+            {
+                get
+                {
+                    return x;
+                }
+                set
+                {
+                    x = value;
+                }
+            }
+            public int Y
+            {
+                get
+                {
+                    return y;
+                }
+                set
+                {
+                    y = value;
+                }
+            }
+        }
         Random r = new Random();
 
         public World()
@@ -42,9 +70,9 @@ namespace FogueLike
             {
                 Map[i, 0] = "X";
                 Map[i, Map.GetLength(1) - 1] = "X";
-            } 
+            }
             #endregion
-
+            HallGen();
             // print board...
             for (int i = 0; i < Map.GetLength(0); i++)
             {
@@ -58,11 +86,15 @@ namespace FogueLike
 
         void HallGen()
         {
+            int XDifference = 0;
+            int YDifference = 0;
+            int XStart = 0;
+            int YStart = 0;
             for (int i = 0; i < Map.GetLength(0); i++)
             {
                 for (int j = 0; j < Map.GetLength(0); j++)
                 {
-                    if (Map[i, j].Equals("-"))
+                    if (Map[i, j].Equals("-")) // if we find a upper/lower wall, search any other type of wall
                     {
                         for (int a = i + 1; a < Map.GetLength(0); a++)
                         {
@@ -70,13 +102,25 @@ namespace FogueLike
                             {
                                 if (Map[a, j].Equals("-"))
                                 {
-                                    // TODO: Connect our two spots?
+                                    XDifference = a - i;
+                                    YDifference = b - j;
+                                    XStart = a;
+                                    YStart = b;
+                                    break;
                                 }
                             }
                         }
                     }
                 }
             }
+            for (int i = 0; i < XDifference; i++)
+            {
+                for (int j = 0; j < YDifference; j++)
+                {
+
+                }
+            }
+            Console.WriteLine(XDifference + " " + YDifference + "\n" + XStart + " " + YStart);
         }
 
         String[,] RoomGen()
