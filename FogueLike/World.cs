@@ -15,17 +15,26 @@ namespace FogueLike
         public World()
         {
             Map = new String[80, 150];
+            Player p = new Player();
+
             WorldGen();
             Console.WriteLine("Press V to generate a new map. Press ESC to quit.");
             ConsoleKeyInfo c;
+
             do
             {
                 c = Console.ReadKey();
+                // movement controllers
+                if (c.Key == ConsoleKey.UpArrow)
+                {
+
+                }
+
                 if (c.Key == ConsoleKey.V)
                 {
                     Console.Clear();
-                    Console.WriteLine("Press V to generate a new map. Press ESC to quit.");
                     WorldGen();
+                    Console.WriteLine("Press V to generate a new map. Press ESC to quit.");
                 }
             } while (c.Key != ConsoleKey.Escape);
         }
@@ -78,12 +87,6 @@ namespace FogueLike
         {
             while (halls-- > 0)
             {
-                /*
-                int XStart = r.Next(1, 99);
-                int YStart = r.Next(1, 49);
-                int XEnd = r.Next(50, 99);
-                int YEnd = r.Next(50, 99);
-                */
                 int XStart = r.Next(1, Map.GetLength(1));
                 int YStart = r.Next(1, Map.GetLength(0));
                 int XEnd = r.Next(1, Map.GetLength(1));
