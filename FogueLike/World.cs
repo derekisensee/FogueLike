@@ -9,15 +9,18 @@ namespace FogueLike
 {
     public class World
     {
+        Player p;
         String[,] Map;
         Random r = new Random();
-
-        public World()
+        
+        public World(int y)
         {
-            Map = new String[80, 150];
-            Player p = new Player();
+            Map = new String[y, 150];
+            p = new Player(30, 30);
 
             WorldGen();
+            PlacePlayer();
+            PrintMap();
             Console.WriteLine("Press V to generate a new map. Press ESC to quit.");
             ConsoleKeyInfo c;
 
@@ -25,23 +28,36 @@ namespace FogueLike
             {
                 c = Console.ReadKey();
                 // movement controllers
-                if (c.Key == ConsoleKey.UpArrow)
+                if (c.Key == ConsoleKey.UpArrow && Map[p.position.Y + 1, p.position.X].Equals("."))
                 {
-
+                    Map[p.position.Y, p.position.X] = ".";
+                    Console.SetCursorPosition(p.position.X, p.position.Y); // ????
+                    Console.Write(".");
+                    p.position.Y -= 1;
+                    PlacePlayer();
+                    Console.SetCursorPosition(p.position.X, p.position.Y); // ????
+                    Console.Write("@");
+                    //PrintMap(); we can optimize printing here. use setcursor and the like
                 }
 
                 if (c.Key == ConsoleKey.V)
                 {
                     Console.Clear();
                     WorldGen();
+                    PrintMap();
                     Console.WriteLine("Press V to generate a new map. Press ESC to quit.");
                 }
             } while (c.Key != ConsoleKey.Escape);
         }
 
+        public void PlacePlayer()
+        {
+            Map[p.position.Y, p.position.X] = "@";
+        }
+
+        #region World Generation Stuffs
         void WorldGen()
         {
-            #region "World" Generation
             // fill entire map
             for (int i = 0; i < Map.GetLength(0); i++)
             {
@@ -56,7 +72,7 @@ namespace FogueLike
             {
                 PlaceObject(RoomGen(), r.Next(1, 148), r.Next(1, 70));
             }
-
+            HallGen(10);
             // bounds of whole map
             for (int i = 0; i < Map.GetLength(1); i++)
             {
@@ -68,18 +84,6 @@ namespace FogueLike
             {
                 Map[i, 0] = "X";
                 Map[i, Map.GetLength(1) - 1] = "X";
-            }
-            HallGen(10);
-            #endregion
-            // prints board
-            Console.SetCursorPosition(0, 0);
-            for (int i = 0; i < Map.GetLength(0); i++)
-            {
-                for (int j = 0; j < Map.GetLength(1); j++)
-                {
-                    Console.Write(Map[i, j]);
-                }
-                Console.WriteLine();
             }
         }
 
@@ -127,7 +131,7 @@ namespace FogueLike
                     {
                         Map[YStart++, XEnd] = ".";
                     }
-                } 
+                }
             }
         }
 
@@ -158,7 +162,8 @@ namespace FogueLike
                 Room[i, Room.GetLength(1) - 1] = "|";
             }
             return Room;
-        }
+        } 
+        #endregion
 
         public void PlaceObject(String[,] structure, int x, int y)
         {
@@ -179,6 +184,19 @@ namespace FogueLike
                 }
                 x = startX;
                 y++;
+            }
+        }
+
+        public void PrintMap()
+        {
+            Console.SetCursorPosition(0, 0);
+            for (int i = 0; i < Map.GetLength(0); i++)
+            {
+                for (int j = 0; j < Map.GetLength(1); j++)
+                {
+                    Console.Write(Map[i, j]);
+                }
+                Console.WriteLine();
             }
         }
     }
