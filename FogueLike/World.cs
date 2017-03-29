@@ -27,19 +27,49 @@ namespace FogueLike
             do
             {
                 c = Console.ReadKey();
-                // movement controllers
-                if (c.Key == ConsoleKey.UpArrow && Map[p.position.Y + 1, p.position.X].Equals("."))
+                #region Movement Controls
+                if (c.Key == ConsoleKey.UpArrow && Map[p.position.Y - 1, p.position.X].Equals("."))
                 {
                     Map[p.position.Y, p.position.X] = ".";
-                    Console.SetCursorPosition(p.position.X, p.position.Y); // ????
+                    Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write(".");
                     p.position.Y -= 1;
                     PlacePlayer();
-                    Console.SetCursorPosition(p.position.X, p.position.Y); // ????
+                    Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write("@");
-                    //PrintMap(); we can optimize printing here. use setcursor and the like
                 }
-
+                if (c.Key == ConsoleKey.DownArrow && Map[p.position.Y + 1, p.position.X].Equals("."))
+                {
+                    Map[p.position.Y, p.position.X] = ".";
+                    Console.SetCursorPosition(p.position.X, p.position.Y);
+                    Console.Write(".");
+                    p.position.Y += 1;
+                    PlacePlayer();
+                    Console.SetCursorPosition(p.position.X, p.position.Y);
+                    Console.Write("@");
+                }
+                if (c.Key == ConsoleKey.LeftArrow && Map[p.position.Y, p.position.X - 1].Equals("."))
+                {
+                    Map[p.position.Y, p.position.X] = ".";
+                    Console.SetCursorPosition(p.position.X, p.position.Y);
+                    Console.Write(".");
+                    p.position.X -= 1;
+                    PlacePlayer();
+                    Console.SetCursorPosition(p.position.X, p.position.Y);
+                    Console.Write("@");
+                }
+                if (c.Key == ConsoleKey.RightArrow && Map[p.position.Y, p.position.X + 1].Equals("."))
+                {
+                    Map[p.position.Y, p.position.X] = ".";
+                    Console.SetCursorPosition(p.position.X, p.position.Y);
+                    Console.Write(".");
+                    p.position.X += 1;
+                    PlacePlayer();
+                    Console.SetCursorPosition(p.position.X, p.position.Y);
+                    Console.Write("@");
+                }
+                Console.SetCursorPosition(0, 0);
+                #endregion
                 if (c.Key == ConsoleKey.V)
                 {
                     Console.Clear();
@@ -163,7 +193,7 @@ namespace FogueLike
             }
             return Room;
         } 
-        #endregion
+        #endregion // TODO: Improve this because it's trash.
 
         public void PlaceObject(String[,] structure, int x, int y)
         {

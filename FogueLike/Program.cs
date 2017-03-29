@@ -7,7 +7,7 @@ namespace FogueLike
     {
         public static void Main(string[] args)
         {
-            World w = new World(55);
+            World w = new World(82);
         }
     }
 }
