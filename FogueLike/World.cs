@@ -10,39 +10,28 @@ namespace FogueLike
     public class World
     {
         String[,] Map;
-        List<Point> UsedPoints;
-        struct Point
-        {
-            private int x;
-            private int y;
-            public int X
-            {
-                get
-                {
-                    return x;
-                }
-                set
-                {
-                    x = value;
-                }
-            }
-            public int Y
-            {
-                get
-                {
-                    return y;
-                }
-                set
-                {
-                    y = value;
-                }
-            }
-        }
         Random r = new Random();
 
         public World()
         {
-            Map = new String[100, 100];
+            Map = new String[80, 150];
+            WorldGen();
+            Console.WriteLine("Press V to generate a new map. Press ESC to quit.");
+            ConsoleKeyInfo c;
+            do
+            {
+                c = Console.ReadKey();
+                if (c.Key == ConsoleKey.V)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Press V to generate a new map. Press ESC to quit.");
+                    WorldGen();
+                }
+            } while (c.Key != ConsoleKey.Escape);
+        }
+
+        void WorldGen()
+        {
             #region "World" Generation
             // fill entire map
             for (int i = 0; i < Map.GetLength(0); i++)
@@ -54,9 +43,9 @@ namespace FogueLike
             }
 
             // random rooms..
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 15; i++)
             {
-                PlaceObject(RoomGen(), r.Next(0, 100), r.Next(0, 100));
+                PlaceObject(RoomGen(), r.Next(1, 148), r.Next(1, 70));
             }
 
             // bounds of whole map
@@ -71,9 +60,10 @@ namespace FogueLike
                 Map[i, 0] = "X";
                 Map[i, Map.GetLength(1) - 1] = "X";
             }
+            HallGen(10);
             #endregion
-            HallGen();
-            // print board...
+            // prints board
+            Console.SetCursorPosition(0, 0);
             for (int i = 0; i < Map.GetLength(0); i++)
             {
                 for (int j = 0; j < Map.GetLength(1); j++)
@@ -84,43 +74,58 @@ namespace FogueLike
             }
         }
 
-        void HallGen()
+        void HallGen(int halls)
         {
-            int XDifference = 0;
-            int YDifference = 0;
-            int XStart = 0;
-            int YStart = 0;
-            for (int i = 0; i < Map.GetLength(0); i++)
+            while (halls-- > 0)
             {
-                for (int j = 0; j < Map.GetLength(0); j++)
+                /*
+                int XStart = r.Next(1, 99);
+                int YStart = r.Next(1, 49);
+                int XEnd = r.Next(50, 99);
+                int YEnd = r.Next(50, 99);
+                */
+                int XStart = r.Next(1, Map.GetLength(1));
+                int YStart = r.Next(1, Map.GetLength(0));
+                int XEnd = r.Next(1, Map.GetLength(1));
+                int YEnd = r.Next(1, Map.GetLength(0));
+
+                Map[YStart, XStart] = ".";
+                Map[YEnd, XEnd] = ".";
+
+                int XDif; int YDif;
+                if (XStart > XEnd)
                 {
-                    if (Map[i, j].Equals("-")) // if we find a upper/lower wall, search any other type of wall
+                    XDif = XStart - XEnd;
+                    for (; XDif > 0; XDif--)
                     {
-                        for (int a = i + 1; a < Map.GetLength(0); a++)
-                        {
-                            for (int b = j + 1; b < Map.GetLength(1); b++)
-                            {
-                                if (Map[a, j].Equals("-"))
-                                {
-                                    XDifference = a - i;
-                                    YDifference = b - j;
-                                    XStart = a;
-                                    YStart = b;
-                                    break;
-                                }
-                            }
-                        }
+                        Map[YStart, XStart--] = ".";
                     }
                 }
-            }
-            for (int i = 0; i < XDifference; i++)
-            {
-                for (int j = 0; j < YDifference; j++)
+                else
                 {
-
+                    XDif = XEnd - XStart;
+                    for (; XDif > 0; XDif--)
+                    {
+                        Map[YStart, XStart++] = ".";
+                    }
                 }
+                if (YStart > YEnd)
+                {
+                    YDif = YStart - YEnd;
+                    for (; YDif > 0; YDif--)
+                    {
+                        Map[YStart--, XEnd] = ".";
+                    }
+                }
+                else
+                {
+                    YDif = YEnd - YStart;
+                    for (; YDif > 0; YDif--)
+                    {
+                        Map[YStart++, XEnd] = ".";
+                    }
+                } 
             }
-            Console.WriteLine(XDifference + " " + YDifference + "\n" + XStart + " " + YStart);
         }
 
         String[,] RoomGen()
@@ -160,9 +165,13 @@ namespace FogueLike
             {
                 for (int j = 0; j < structure.GetLength(1); j++)
                 {
-                    if (y < Map.GetLength(1) && x < Map.GetLength(0))
+                    if ((y < Map.GetLength(0) && x < Map.GetLength(1)) && (i < structure.GetLength(0) && j < structure.GetLength(1)))
                     {
                         Map[y, x++] = structure[i, j];
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
                 x = startX;
