@@ -86,31 +86,30 @@ namespace FogueLike
                 Console.SetCursorPosition(0, 0);
                 #endregion
                 #region Stair Stuff
-                if (c.Key == ConsoleKey.J && tempSpot.Equals(">"))
+                // moving down a floor.
+                if (c.Key == ConsoleKey.J && tempSpot.Equals(">"))  // TODO: Moving up a floor works correctly, 
+                                                                    //but moving down one spawns us in the wrong place, spawn place is consistent
                 {
                     Console.Clear();
                     // This prevents the stairs from becoming the player if we return to this floor.
                     Map[p.position.Y, p.position.X] = ">";
                     currentWorld[worldNum] = Map;
-
-                    // memory!
-                    Player.Point oldSpot = new Player.Point();
-                    oldSpot.X = p.position.X; oldSpot.Y = p.position.Y;
-                    p.floorPositions.Add(oldSpot);
-
+                    
                     // Load the next map
                     Map = currentWorld[++worldNum];
-                    SpawnChars(); // we need to make transportation between floors consistent. which is what I'm doing now, thanks bud.
+                    p.position.X = p.upStairPositions[worldNum].X; p.position.Y = p.upStairPositions[worldNum].Y;
                     tempSpot = ".";
                     PrintMap();
                 }
-                if (c.Key == ConsoleKey.J && tempSpot.Equals("<")) // ???
+                // moving up a floor.
+                if (c.Key == ConsoleKey.J && tempSpot.Equals("<"))
                 {
                     Console.Clear();
+                    Map[p.position.Y, p.position.X] = "<";
+
                     Map = currentWorld[--worldNum];
-                    Map[p.floorPositions[worldNum].Y - 1, p.floorPositions[worldNum].X] = "@";
-                    p.position.X = p.floorPositions[worldNum].X; p.position.Y = p.floorPositions[worldNum].Y - 1; 
-                    //SpawnChars();
+                    Map[p.downStairPositions[worldNum].Y, p.downStairPositions[worldNum].X] = "@";
+                    p.position.X = p.downStairPositions[worldNum].X; p.position.Y = p.downStairPositions[worldNum].Y;
                     tempSpot = ".";
                     PrintMap();
                 }
@@ -141,22 +140,6 @@ namespace FogueLike
                     p.position.X = XSpawn;
                     p.position.Y = YSpawn;
                     PlacePlayer();
-                    if (Map[YSpawn + 1, XSpawn].Equals(".")) // we need to figure out this mess
-                    {
-                        Map[YSpawn + 1, XSpawn] = "<";
-                    }
-                    else if (Map[YSpawn - 1, XSpawn].Equals("."))
-                    {
-                        Map[YSpawn - 1, XSpawn] = "<";
-                    }
-                    else if (Map[YSpawn, XSpawn + 1].Equals("."))
-                    {
-                        Map[YSpawn, XSpawn + 1] = "<";
-                    }
-                    else if (Map[YSpawn, XSpawn - 1].Equals("."))
-                    {
-                        Map[YSpawn, XSpawn - 1] = "<";
-                    }
                     playerPlaced = true;
                 }
             } while (playerPlaced == false);
@@ -198,8 +181,9 @@ namespace FogueLike
                 tempMap[i, 0] = "X";
                 tempMap[i, Map.GetLength(1) - 1] = "X";
             }
-            // /////
-            Boolean stairPlaced = false;
+            ///////
+            Boolean downStairPlaced = false;
+            Boolean upStairPlaced = false;
             do
             {
                 int XStair = r.Next(1, tempMap.GetLength(1) - 1);
@@ -207,9 +191,70 @@ namespace FogueLike
                 if (tempMap[YStair, XStair].Equals("."))
                 {
                     tempMap[YStair, XStair] = ">";
-                    stairPlaced = true;
+                    if (tempMap[YStair, XStair - 1].Equals("."))
+                    {
+                        Player.Point backPoint = new Player.Point();
+                        backPoint.X = XStair - 1; backPoint.Y = YStair;
+                        p.downStairPositions.Add(backPoint);
+                    }
+                    if (tempMap[YStair, XStair + 1].Equals("."))
+                    {
+                        Player.Point backPoint = new Player.Point();
+                        backPoint.X = XStair + 1; backPoint.Y = YStair;
+                        p.downStairPositions.Add(backPoint);
+                    }
+                    if (tempMap[YStair - 1, XStair].Equals("."))
+                    {
+                        Player.Point backPoint = new Player.Point();
+                        backPoint.X = XStair; backPoint.Y = YStair - 1;
+                        p.downStairPositions.Add(backPoint);
+                    }
+                    if (tempMap[YStair + 1, XStair].Equals("."))
+                    {
+                        Player.Point backPoint = new Player.Point();
+                        backPoint.X = XStair; backPoint.Y = YStair + 1;
+                        p.downStairPositions.Add(backPoint);
+                    }
+
+
+                    downStairPlaced = true;
                 }
-            } while (stairPlaced == false);
+            } while (downStairPlaced == false);
+
+            do
+            {
+                int XStair = r.Next(1, tempMap.GetLength(1) - 1);
+                int YStair = r.Next(1, tempMap.GetLength(0) - 1);
+                if (tempMap[YStair, XStair].Equals("."))
+                {
+                    tempMap[YStair, XStair] = "<";
+                    if (tempMap[YStair, XStair - 1].Equals("."))
+                    {
+                        Player.Point backPoint = new Player.Point();
+                        backPoint.X = XStair - 1; backPoint.Y = YStair;
+                        p.upStairPositions.Add(backPoint);
+                    }
+                    if (tempMap[YStair, XStair + 1].Equals("."))
+                    {
+                        Player.Point backPoint = new Player.Point();
+                        backPoint.X = XStair + 1; backPoint.Y = YStair;
+                        p.upStairPositions.Add(backPoint);
+                    }
+                    if (tempMap[YStair - 1, XStair].Equals("."))
+                    {
+                        Player.Point backPoint = new Player.Point();
+                        backPoint.X = XStair; backPoint.Y = YStair - 1;
+                        p.upStairPositions.Add(backPoint);
+                    }
+                    if (tempMap[YStair + 1, XStair].Equals("."))
+                    {
+                        Player.Point backPoint = new Player.Point();
+                        backPoint.X = XStair; backPoint.Y = YStair + 1;
+                        p.upStairPositions.Add(backPoint);
+                    }
+                    upStairPlaced = true;
+                }
+            } while (upStairPlaced == false);
             return tempMap;
         }
 
