@@ -11,73 +11,132 @@ namespace FogueLike
     {
         Player p;
         String[,] Map;
+        List<String[,]> currentWorld;
+        int worldNum;
+
         Random r = new Random();
         
         public World(int y)
         {
             Map = new String[y, 150];
             p = new Player(30, 30);
-
+            currentWorld = new List<String[,]>();
+            worldNum = 0;
             WorldGen();
-            PlacePlayer();
+            SpawnChars();
+            currentWorld.Add(Map);
             PrintMap();
+            
             Console.WriteLine("Press V to generate a new map. Press ESC to quit.");
             ConsoleKeyInfo c;
+            String tempSpot = "."; // holds the place of the last thing we step on.
 
             do
             {
                 c = Console.ReadKey();
                 #region Movement Controls
-                if (c.Key == ConsoleKey.UpArrow && Map[p.position.Y - 1, p.position.X].Equals("."))
+                if (c.Key == ConsoleKey.UpArrow && (Map[p.position.Y - 1, p.position.X].Equals(".") || Map[p.position.Y - 1, p.position.X].Equals(">")))
                 {
-                    Map[p.position.Y, p.position.X] = ".";
                     Console.SetCursorPosition(p.position.X, p.position.Y);
-                    Console.Write(".");
+                    Console.Write(tempSpot);
+                    Map[p.position.Y, p.position.X] = tempSpot;
                     p.position.Y -= 1;
+                    tempSpot = Map[p.position.Y, p.position.X];
                     PlacePlayer();
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write("@");
                 }
-                if (c.Key == ConsoleKey.DownArrow && Map[p.position.Y + 1, p.position.X].Equals("."))
+                if (c.Key == ConsoleKey.DownArrow && (Map[p.position.Y + 1, p.position.X].Equals(".") || Map[p.position.Y + 1, p.position.X].Equals(">")))
                 {
-                    Map[p.position.Y, p.position.X] = ".";
                     Console.SetCursorPosition(p.position.X, p.position.Y);
-                    Console.Write(".");
+                    Console.Write(tempSpot);
+                    Map[p.position.Y, p.position.X] = tempSpot;
                     p.position.Y += 1;
+                    tempSpot = Map[p.position.Y, p.position.X];
                     PlacePlayer();
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write("@");
                 }
-                if (c.Key == ConsoleKey.LeftArrow && Map[p.position.Y, p.position.X - 1].Equals("."))
+                if (c.Key == ConsoleKey.LeftArrow && (Map[p.position.Y, p.position.X - 1].Equals(".") || Map[p.position.Y, p.position.X - 1].Equals(">")))
                 {
-                    Map[p.position.Y, p.position.X] = ".";
                     Console.SetCursorPosition(p.position.X, p.position.Y);
-                    Console.Write(".");
+                    Console.Write(tempSpot);
+                    Map[p.position.Y, p.position.X] = tempSpot;
                     p.position.X -= 1;
+                    tempSpot = Map[p.position.Y, p.position.X];
                     PlacePlayer();
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write("@");
                 }
-                if (c.Key == ConsoleKey.RightArrow && Map[p.position.Y, p.position.X + 1].Equals("."))
+                if (c.Key == ConsoleKey.RightArrow && (Map[p.position.Y, p.position.X + 1].Equals(".") || Map[p.position.Y, p.position.X + 1].Equals(">")))
                 {
-                    Map[p.position.Y, p.position.X] = ".";
                     Console.SetCursorPosition(p.position.X, p.position.Y);
-                    Console.Write(".");
+                    Console.Write(tempSpot);
+                    Map[p.position.Y, p.position.X] = tempSpot;
                     p.position.X += 1;
+                    tempSpot = Map[p.position.Y, p.position.X];
                     PlacePlayer();
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write("@");
                 }
                 Console.SetCursorPosition(0, 0);
                 #endregion
+                #region Stair Stuff
+                if (c.Key == ConsoleKey.J && tempSpot.Equals(">"))
+                {
+                    worldNum++;
+                    WorldGen();
+                    SpawnChars();
+                    currentWorld.Add(Map);
+                    tempSpot = ".";
+                    PrintMap();
+                }
+                #endregion
+
                 if (c.Key == ConsoleKey.V)
                 {
                     Console.Clear();
                     WorldGen();
+                    SpawnChars();
                     PrintMap();
                     Console.WriteLine("Press V to generate a new map. Press ESC to quit.");
                 }
             } while (c.Key != ConsoleKey.Escape);
+        }
+
+        public void SpawnChars()
+        {
+            // Place the player.
+            Boolean playerPlaced = false;
+            do
+            {
+                int XSpawn = r.Next(1, Map.GetLength(1) - 1);
+                int YSpawn = r.Next(1, Map.GetLength(0) - 1);
+                if (Map[YSpawn, XSpawn].Equals("."))
+                {
+                    Map[YSpawn, XSpawn] = "@";
+                    p.position.X = XSpawn;
+                    p.position.Y = YSpawn;
+                    PlacePlayer();
+                    if (Map[YSpawn + 1, XSpawn].Equals("."))
+                    {
+                        Map[YSpawn + 1, XSpawn] = "<";
+                    }
+                    else if (Map[YSpawn - 1, XSpawn].Equals("."))
+                    {
+                        Map[YSpawn - 1, XSpawn] = "<";
+                    }
+                    else if (Map[YSpawn, XSpawn + 1].Equals("."))
+                    {
+                        Map[YSpawn, XSpawn + 1] = "<";
+                    }
+                    else if (Map[YSpawn, XSpawn - 1].Equals("."))
+                    {
+                        Map[YSpawn, XSpawn - 1] = "<";
+                    }
+                    playerPlaced = true;
+                }
+            } while (playerPlaced == false);
         }
 
         public void PlacePlayer()
@@ -88,7 +147,7 @@ namespace FogueLike
         #region World Generation Stuffs
         void WorldGen()
         {
-            // fill entire map
+            // Fill the entire map.
             for (int i = 0; i < Map.GetLength(0); i++)
             {
                 for (int j = 0; j < Map.GetLength(1); j++)
@@ -115,6 +174,19 @@ namespace FogueLike
                 Map[i, 0] = "X";
                 Map[i, Map.GetLength(1) - 1] = "X";
             }
+            // /////
+            Boolean stairPlaced = false;
+            do
+            {
+                int XStair = r.Next(1, Map.GetLength(1) - 1);
+                int YStair = r.Next(1, Map.GetLength(0) - 1);
+                if (Map[YStair, XStair].Equals("."))
+                {
+                    Map[YStair, XStair] = ">";
+                    stairPlaced = true;
+                }
+            } while (stairPlaced == false);
+            
         }
 
         void HallGen(int halls)
