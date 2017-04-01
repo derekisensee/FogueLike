@@ -87,8 +87,7 @@ namespace FogueLike
                 #endregion
                 #region Stair Stuff
                 // moving down a floor.
-                if (c.Key == ConsoleKey.J && tempSpot.Equals(">"))  // TODO: Moving up a floor works correctly, 
-                                                                    //but moving down one spawns us in the wrong place, spawn place is consistent
+                if (c.Key == ConsoleKey.J && tempSpot.Equals(">"))
                 {
                     Console.Clear();
                     // This prevents the stairs from becoming the player if we return to this floor.
@@ -97,6 +96,7 @@ namespace FogueLike
                     
                     // Load the next map
                     Map = currentWorld[++worldNum];
+                    Map[p.upStairPositions[worldNum].Y, p.upStairPositions[worldNum].X] = "@";
                     p.position.X = p.upStairPositions[worldNum].X; p.position.Y = p.upStairPositions[worldNum].Y;
                     tempSpot = ".";
                     PrintMap();
@@ -197,19 +197,19 @@ namespace FogueLike
                         backPoint.X = XStair - 1; backPoint.Y = YStair;
                         p.downStairPositions.Add(backPoint);
                     }
-                    if (tempMap[YStair, XStair + 1].Equals("."))
+                    else if (tempMap[YStair, XStair + 1].Equals("."))
                     {
                         Player.Point backPoint = new Player.Point();
                         backPoint.X = XStair + 1; backPoint.Y = YStair;
                         p.downStairPositions.Add(backPoint);
                     }
-                    if (tempMap[YStair - 1, XStair].Equals("."))
+                    else if (tempMap[YStair - 1, XStair].Equals("."))
                     {
                         Player.Point backPoint = new Player.Point();
                         backPoint.X = XStair; backPoint.Y = YStair - 1;
                         p.downStairPositions.Add(backPoint);
                     }
-                    if (tempMap[YStair + 1, XStair].Equals("."))
+                    else if (tempMap[YStair + 1, XStair].Equals("."))
                     {
                         Player.Point backPoint = new Player.Point();
                         backPoint.X = XStair; backPoint.Y = YStair + 1;
@@ -234,19 +234,19 @@ namespace FogueLike
                         backPoint.X = XStair - 1; backPoint.Y = YStair;
                         p.upStairPositions.Add(backPoint);
                     }
-                    if (tempMap[YStair, XStair + 1].Equals("."))
+                    else if (tempMap[YStair, XStair + 1].Equals("."))
                     {
                         Player.Point backPoint = new Player.Point();
                         backPoint.X = XStair + 1; backPoint.Y = YStair;
                         p.upStairPositions.Add(backPoint);
                     }
-                    if (tempMap[YStair - 1, XStair].Equals("."))
+                    else if (tempMap[YStair - 1, XStair].Equals("."))
                     {
                         Player.Point backPoint = new Player.Point();
                         backPoint.X = XStair; backPoint.Y = YStair - 1;
                         p.upStairPositions.Add(backPoint);
                     }
-                    if (tempMap[YStair + 1, XStair].Equals("."))
+                    else if (tempMap[YStair + 1, XStair].Equals("."))
                     {
                         Player.Point backPoint = new Player.Point();
                         backPoint.X = XStair; backPoint.Y = YStair + 1;
