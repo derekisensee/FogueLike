@@ -1,0 +1,7 @@
+/home/derek/RiderProjects/FogueLike/FogueLike/obj/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/derek/RiderProjects/FogueLike/FogueLike/bin/Debug/FogueLike.exe.mdb
+/home/derek/RiderProjects/FogueLike/FogueLike/bin/Debug/FogueLike.exe
+/home/derek/RiderProjects/FogueLike/FogueLike/obj/Debug/FogueLike.exe
+/home/derek/RiderProjects/FogueLike/FogueLike/obj/Debug/FogueLike.exe.mdb
+/home/derek/RiderProjects/FogueLike/FogueLike/bin/Debug/FogueLike.pdb
+/home/derek/RiderProjects/FogueLike/FogueLike/obj/Debug/FogueLike.pdb
