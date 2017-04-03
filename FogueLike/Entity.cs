@@ -6,10 +6,14 @@ using System.Threading.Tasks;
 
 namespace FogueLike
 {
-    public class Player
+    public class Entity
     {
-        public List<Item> inventory;
-        public List<Item> equipped;
+        String id;
+        String symbol;
+        int hp;
+        public Point pos;
+        List<Item> inventory;
+        List<Item> equipped;
 
         public struct Point
         {
@@ -37,28 +41,31 @@ namespace FogueLike
                     y = value;
                 }
             }
-        } // player's location
-        public Point position;
-        public List<Point> downStairPositions;
-        public List<Point> upStairPositions;
-
-        public Player ()
-        {
-            inventory = new List<Item>();
-            equipped = new List<Item>();
-
-            equipped.Add(new Item("fist"));
-
-            downStairPositions = new List<Point>();
-            upStairPositions = new List<Point>();
-            position = new Point();
         }
 
-        public Player(int x, int y)
+        public Entity(int x, int y)
         {
-            position = new Point();
-            position.X = 30;
-            position.Y = 20;
+            symbol = "g";
+            hp = 20;
+            inventory = new List<Item>();
+            equipped = new List<Item>();
+            pos = new Point();
+            pos.X = x;
+            pos.Y = y;
+        }
+
+        public String GetSymbol()
+        {
+            return symbol;
+        }
+
+        public void decHP(Item i)
+        {
+            hp -= i.getATK();
+            if (hp <= 0)
+            {
+                symbol = "x";
+            }
         }
     }
 }

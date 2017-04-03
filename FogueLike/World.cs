@@ -12,7 +12,10 @@ namespace FogueLike
         Player p;
         String[,] Map;
         List<String[,]> currentWorld;
+        List<String> symbols;
+        Dictionary<String, Entity> entities;
         int worldNum;
+        int entID;
 
         Random r = new Random();
         
@@ -21,7 +24,12 @@ namespace FogueLike
             Map = new String[y, 150];
             p = new Player();
             currentWorld = new List<String[,]>();
+            entities = new Dictionary<string, Entity>();
             worldNum = 0;
+            entID = 0;
+
+            symbols = new List<String>();
+            symbols.Add("g");
 
             int floors = 5;
             while (floors-- > 0) {
@@ -35,6 +43,7 @@ namespace FogueLike
             ConsoleKeyInfo c;
             String tempSpot = "."; // holds the place of the last thing we step on.
 
+            // This loop is where the gameplay takes place.
             do
             {
                 c = Console.ReadKey();
@@ -85,6 +94,64 @@ namespace FogueLike
                 }
                 Console.SetCursorPosition(0, 0);
                 #endregion
+                #region Attack Stuff
+                if (c.Key == ConsoleKey.RightArrow && symbols.Contains(Map[p.position.Y, p.position.X + 1]))
+                {
+                    foreach (Entity s in entities.Values)
+                    {
+                        if (s.pos.X == p.position.X + 1 && s.pos.Y == p.position.Y)
+                        {
+                            s.decHP(p.equipped[0]);
+                            Map[p.position.Y, p.position.X + 1] = s.GetSymbol();
+                            Console.SetCursorPosition(p.position.X + 1, p.position.Y);
+                            Console.Write(Map[p.position.Y, p.position.X + 1]);
+                            Console.SetCursorPosition(0, 0);
+                        }
+                    }
+                }
+                if (c.Key == ConsoleKey.LeftArrow && symbols.Contains(Map[p.position.Y, p.position.X - 1]))
+                {
+                    foreach (Entity s in entities.Values)
+                    {
+                        if (s.pos.X == p.position.X - 1 && s.pos.Y == p.position.Y)
+                        {
+                            s.decHP(p.equipped[0]);
+                            Map[p.position.Y, p.position.X - 1] = s.GetSymbol();
+                            Console.SetCursorPosition(p.position.X - 1, p.position.Y);
+                            Console.Write(Map[p.position.Y, p.position.X - 1]);
+                            Console.SetCursorPosition(0, 0);
+                        }
+                    }
+                }
+                if (c.Key == ConsoleKey.DownArrow && symbols.Contains(Map[p.position.Y + 1, p.position.X]))
+                {
+                    foreach (Entity s in entities.Values)
+                    {
+                        if (s.pos.X == p.position.X && s.pos.Y == p.position.Y + 1)
+                        {
+                            s.decHP(p.equipped[0]);
+                            Map[p.position.Y + 1, p.position.X] = s.GetSymbol();
+                            Console.SetCursorPosition(p.position.X, p.position.Y + 1);
+                            Console.Write(Map[p.position.Y + 1, p.position.X]);
+                            Console.SetCursorPosition(0, 0);
+                        }
+                    }
+                }
+                if (c.Key == ConsoleKey.UpArrow && symbols.Contains(Map[p.position.Y - 1, p.position.X]))
+                {
+                    foreach (Entity s in entities.Values)
+                    {
+                        if (s.pos.X == p.position.X && s.pos.Y == p.position.Y - 1)
+                        {
+                            s.decHP(p.equipped[0]);
+                            Map[p.position.Y - 1, p.position.X] = s.GetSymbol();
+                            Console.SetCursorPosition(p.position.X, p.position.Y - 1);
+                            Console.Write(Map[p.position.Y - 1, p.position.X]);
+                            Console.SetCursorPosition(0, 0);
+                        }
+                    }
+                }
+                #endregion
                 #region Stair Stuff
                 // moving down a floor.
                 if (c.Key == ConsoleKey.J && tempSpot.Equals(">"))
@@ -115,20 +182,8 @@ namespace FogueLike
                 }
                 #endregion
 
-                if (c.Key == ConsoleKey.V)
-                {
-                    Console.Clear();
-                    Map = currentWorld[worldNum++];
-                    SpawnPlayer();
-                    PrintMap();
-                    Console.WriteLine("Press J to travel up/down stairs. Press ESC to quit.");
-                }
+
             } while (c.Key != ConsoleKey.Escape);
-        }
-
-        public void SpawnEntites() // to be called at initial map/level creation
-        {
-
         }
 
         public void SpawnPlayer() // TODO: Split this up, have seperate method that initally places player, and make this one the one that spawns entities.
@@ -260,6 +315,28 @@ namespace FogueLike
                     upStairPlaced = true;
                 }
             } while (upStairPlaced == false);
+
+            #region Entity Spawning
+            int numEnts = r.Next(8, 10);
+            while (numEnts-- > 0)
+            {
+                Boolean placed = false;
+                do
+                {
+                    int xVal = r.Next(1, Map.GetLength(1) - 1);
+                    int yVal = r.Next(1, Map.GetLength(0) - 1);
+                    if (tempMap[yVal, xVal].Equals("."))
+                    {
+                        placed = true;
+                        Entity e = new Entity(xVal, yVal);
+                        entities.Add(entID + "", e);
+                        tempMap[yVal, xVal] = entities[entID + ""].GetSymbol();
+                        entID++;
+                    }
+                } while (placed == false);
+                
+            }
+            #endregion
             return tempMap;
         }
 
