@@ -36,6 +36,15 @@ namespace FogueLike
             }
         } // player's location
         public Point position;
+        public List<Point> downStairPositions;
+        public List<Point> upStairPositions;
+
+        public Player ()
+        {
+            downStairPositions = new List<Point>();
+            upStairPositions = new List<Point>();
+            position = new Point();
+        }
 
         public Player(int x, int y)
         {

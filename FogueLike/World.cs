@@ -19,15 +19,19 @@ namespace FogueLike
         public World(int y)
         {
             Map = new String[y, 150];
-            p = new Player(30, 30);
+            p = new Player();
             currentWorld = new List<String[,]>();
             worldNum = 0;
-            WorldGen();
-            SpawnChars();
-            currentWorld.Add(Map);
+
+            int floors = 5;
+            while (floors-- > 0) {
+                currentWorld.Add(WorldGen(y));
+            }
+            Map = currentWorld[worldNum];
+            SpawnPlayer();
             PrintMap();
-            
-            Console.WriteLine("Press V to generate a new map. Press ESC to quit.");
+
+            Console.WriteLine("Press J to travel up/down stairs. Press ESC to quit.");
             ConsoleKeyInfo c;
             String tempSpot = "."; // holds the place of the last thing we step on.
 
@@ -35,7 +39,7 @@ namespace FogueLike
             {
                 c = Console.ReadKey();
                 #region Movement Controls
-                if (c.Key == ConsoleKey.UpArrow && (Map[p.position.Y - 1, p.position.X].Equals(".") || Map[p.position.Y - 1, p.position.X].Equals(">")))
+                if (c.Key == ConsoleKey.UpArrow && (Map[p.position.Y - 1, p.position.X].Equals(".") || Map[p.position.Y - 1, p.position.X].Equals(">") || Map[p.position.Y - 1, p.position.X].Equals("<")))
                 {
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write(tempSpot);
@@ -46,7 +50,7 @@ namespace FogueLike
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write("@");
                 }
-                if (c.Key == ConsoleKey.DownArrow && (Map[p.position.Y + 1, p.position.X].Equals(".") || Map[p.position.Y + 1, p.position.X].Equals(">")))
+                if (c.Key == ConsoleKey.DownArrow && (Map[p.position.Y + 1, p.position.X].Equals(".") || Map[p.position.Y + 1, p.position.X].Equals(">") || Map[p.position.Y + 1, p.position.X].Equals("<")))
                 {
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write(tempSpot);
@@ -57,7 +61,7 @@ namespace FogueLike
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write("@");
                 }
-                if (c.Key == ConsoleKey.LeftArrow && (Map[p.position.Y, p.position.X - 1].Equals(".") || Map[p.position.Y, p.position.X - 1].Equals(">")))
+                if (c.Key == ConsoleKey.LeftArrow && (Map[p.position.Y, p.position.X - 1].Equals(".") || Map[p.position.Y, p.position.X - 1].Equals(">") || Map[p.position.Y, p.position.X - 1].Equals("<")))
                 {
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write(tempSpot);
@@ -68,7 +72,7 @@ namespace FogueLike
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write("@");
                 }
-                if (c.Key == ConsoleKey.RightArrow && (Map[p.position.Y, p.position.X + 1].Equals(".") || Map[p.position.Y, p.position.X + 1].Equals(">")))
+                if (c.Key == ConsoleKey.RightArrow && (Map[p.position.Y, p.position.X + 1].Equals(".") || Map[p.position.Y, p.position.X + 1].Equals(">") || Map[p.position.Y, p.position.X + 1].Equals("<")))
                 {
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write(tempSpot);
@@ -82,12 +86,30 @@ namespace FogueLike
                 Console.SetCursorPosition(0, 0);
                 #endregion
                 #region Stair Stuff
+                // moving down a floor.
                 if (c.Key == ConsoleKey.J && tempSpot.Equals(">"))
                 {
-                    worldNum++;
-                    WorldGen();
-                    SpawnChars();
-                    currentWorld.Add(Map);
+                    Console.Clear();
+                    // This prevents the stairs from becoming the player if we return to this floor.
+                    Map[p.position.Y, p.position.X] = ">";
+                    currentWorld[worldNum] = Map;
+                    
+                    // Load the next map
+                    Map = currentWorld[++worldNum];
+                    Map[p.upStairPositions[worldNum].Y, p.upStairPositions[worldNum].X] = "@";
+                    p.position.X = p.upStairPositions[worldNum].X; p.position.Y = p.upStairPositions[worldNum].Y;
+                    tempSpot = ".";
+                    PrintMap();
+                }
+                // moving up a floor.
+                if (c.Key == ConsoleKey.J && tempSpot.Equals("<"))
+                {
+                    Console.Clear();
+                    Map[p.position.Y, p.position.X] = "<";
+
+                    Map = currentWorld[--worldNum];
+                    Map[p.downStairPositions[worldNum].Y, p.downStairPositions[worldNum].X] = "@";
+                    p.position.X = p.downStairPositions[worldNum].X; p.position.Y = p.downStairPositions[worldNum].Y;
                     tempSpot = ".";
                     PrintMap();
                 }
@@ -96,15 +118,20 @@ namespace FogueLike
                 if (c.Key == ConsoleKey.V)
                 {
                     Console.Clear();
-                    WorldGen();
-                    SpawnChars();
+                    Map = currentWorld[worldNum++];
+                    SpawnPlayer();
                     PrintMap();
-                    Console.WriteLine("Press V to generate a new map. Press ESC to quit.");
+                    Console.WriteLine("Press J to travel up/down stairs. Press ESC to quit.");
                 }
             } while (c.Key != ConsoleKey.Escape);
         }
 
-        public void SpawnChars()
+        public void SpawnEntites() // to be called at initial map/level creation
+        {
+
+        }
+
+        public void SpawnPlayer() // TODO: Split this up, have seperate method that initally places player, and make this one the one that spawns entities.
         {
             // Place the player.
             Boolean playerPlaced = false;
@@ -118,22 +145,6 @@ namespace FogueLike
                     p.position.X = XSpawn;
                     p.position.Y = YSpawn;
                     PlacePlayer();
-                    if (Map[YSpawn + 1, XSpawn].Equals("."))
-                    {
-                        Map[YSpawn + 1, XSpawn] = "<";
-                    }
-                    else if (Map[YSpawn - 1, XSpawn].Equals("."))
-                    {
-                        Map[YSpawn - 1, XSpawn] = "<";
-                    }
-                    else if (Map[YSpawn, XSpawn + 1].Equals("."))
-                    {
-                        Map[YSpawn, XSpawn + 1] = "<";
-                    }
-                    else if (Map[YSpawn, XSpawn - 1].Equals("."))
-                    {
-                        Map[YSpawn, XSpawn - 1] = "<";
-                    }
                     playerPlaced = true;
                 }
             } while (playerPlaced == false);
@@ -145,61 +156,124 @@ namespace FogueLike
         }
 
         #region World Generation Stuffs
-        void WorldGen()
+        String[,] WorldGen(int y)
         {
+            String[,] tempMap = new String[y, 150];
             // Fill the entire map.
             for (int i = 0; i < Map.GetLength(0); i++)
             {
                 for (int j = 0; j < Map.GetLength(1); j++)
                 {
-                    Map[i, j] = " ";
+                    tempMap[i, j] = " ";
                 }
             }
 
             // random rooms..
             for (int i = 0; i < 15; i++)
             {
-                PlaceObject(RoomGen(), r.Next(1, 148), r.Next(1, 70));
+                PlaceObject(tempMap, RoomGen(), r.Next(1, 148), r.Next(1, 70));
             }
-            HallGen(10);
+            tempMap = HallGen(tempMap, 10);
             // bounds of whole map
-            for (int i = 0; i < Map.GetLength(1); i++)
+            for (int i = 0; i < tempMap.GetLength(1); i++)
             {
-                Map[0, i] = "X";
-                Map[Map.GetLength(0) - 1, i] = "X";
+                tempMap[0, i] = "X";
+                tempMap[tempMap.GetLength(0) - 1, i] = "X";
             }
 
-            for (int i = 0; i < Map.GetLength(0); i++)
+            for (int i = 0; i < tempMap.GetLength(0); i++)
             {
-                Map[i, 0] = "X";
-                Map[i, Map.GetLength(1) - 1] = "X";
+                tempMap[i, 0] = "X";
+                tempMap[i, Map.GetLength(1) - 1] = "X";
             }
-            // /////
-            Boolean stairPlaced = false;
+            ///////
+            Boolean downStairPlaced = false;
+            Boolean upStairPlaced = false;
             do
             {
-                int XStair = r.Next(1, Map.GetLength(1) - 1);
-                int YStair = r.Next(1, Map.GetLength(0) - 1);
-                if (Map[YStair, XStair].Equals("."))
+                int XStair = r.Next(1, tempMap.GetLength(1) - 1);
+                int YStair = r.Next(1, tempMap.GetLength(0) - 1);
+                if (tempMap[YStair, XStair].Equals("."))
                 {
-                    Map[YStair, XStair] = ">";
-                    stairPlaced = true;
+                    tempMap[YStair, XStair] = ">";
+                    if (tempMap[YStair, XStair - 1].Equals("."))
+                    {
+                        Player.Point backPoint = new Player.Point();
+                        backPoint.X = XStair - 1; backPoint.Y = YStair;
+                        p.downStairPositions.Add(backPoint);
+                    }
+                    else if (tempMap[YStair, XStair + 1].Equals("."))
+                    {
+                        Player.Point backPoint = new Player.Point();
+                        backPoint.X = XStair + 1; backPoint.Y = YStair;
+                        p.downStairPositions.Add(backPoint);
+                    }
+                    else if (tempMap[YStair - 1, XStair].Equals("."))
+                    {
+                        Player.Point backPoint = new Player.Point();
+                        backPoint.X = XStair; backPoint.Y = YStair - 1;
+                        p.downStairPositions.Add(backPoint);
+                    }
+                    else if (tempMap[YStair + 1, XStair].Equals("."))
+                    {
+                        Player.Point backPoint = new Player.Point();
+                        backPoint.X = XStair; backPoint.Y = YStair + 1;
+                        p.downStairPositions.Add(backPoint);
+                    }
+
+
+                    downStairPlaced = true;
                 }
-            } while (stairPlaced == false);
-            
+            } while (downStairPlaced == false);
+
+            do
+            {
+                int XStair = r.Next(1, tempMap.GetLength(1) - 1);
+                int YStair = r.Next(1, tempMap.GetLength(0) - 1);
+                if (tempMap[YStair, XStair].Equals("."))
+                {
+                    tempMap[YStair, XStair] = "<";
+                    if (tempMap[YStair, XStair - 1].Equals("."))
+                    {
+                        Player.Point backPoint = new Player.Point();
+                        backPoint.X = XStair - 1; backPoint.Y = YStair;
+                        p.upStairPositions.Add(backPoint);
+                    }
+                    else if (tempMap[YStair, XStair + 1].Equals("."))
+                    {
+                        Player.Point backPoint = new Player.Point();
+                        backPoint.X = XStair + 1; backPoint.Y = YStair;
+                        p.upStairPositions.Add(backPoint);
+                    }
+                    else if (tempMap[YStair - 1, XStair].Equals("."))
+                    {
+                        Player.Point backPoint = new Player.Point();
+                        backPoint.X = XStair; backPoint.Y = YStair - 1;
+                        p.upStairPositions.Add(backPoint);
+                    }
+                    else if (tempMap[YStair + 1, XStair].Equals("."))
+                    {
+                        Player.Point backPoint = new Player.Point();
+                        backPoint.X = XStair; backPoint.Y = YStair + 1;
+                        p.upStairPositions.Add(backPoint);
+                    }
+                    upStairPlaced = true;
+                }
+            } while (upStairPlaced == false);
+            return tempMap;
         }
 
-        void HallGen(int halls)
+        String[,] HallGen(String[,] givenMap, int halls)
         {
             while (halls-- > 0)
             {
-                int XStart = r.Next(1, Map.GetLength(1));
-                int YStart = r.Next(1, Map.GetLength(0));
-                int XEnd = r.Next(1, Map.GetLength(1));
-                int YEnd = r.Next(1, Map.GetLength(0));
+                int XStart = r.Next(1, givenMap.GetLength(1));
+                int YStart = r.Next(1, givenMap.GetLength(0));
+                int XEnd = r.Next(1, givenMap.GetLength(1));
+                int YEnd = r.Next(1, givenMap.GetLength(0));
 
-                Map[YStart, XStart] = ".";
-                Map[YEnd, XEnd] = ".";
+                givenMap[YStart, XStart] = ".";
+                givenMap[YEnd, XEnd] = ".";
 
                 int XDif; int YDif;
                 if (XStart > XEnd)
@@ -207,7 +281,7 @@ namespace FogueLike
                     XDif = XStart - XEnd;
                     for (; XDif > 0; XDif--)
                     {
-                        Map[YStart, XStart--] = ".";
+                        givenMap[YStart, XStart--] = ".";
                     }
                 }
                 else
@@ -215,7 +289,7 @@ namespace FogueLike
                     XDif = XEnd - XStart;
                     for (; XDif > 0; XDif--)
                     {
-                        Map[YStart, XStart++] = ".";
+                        givenMap[YStart, XStart++] = ".";
                     }
                 }
                 if (YStart > YEnd)
@@ -223,7 +297,7 @@ namespace FogueLike
                     YDif = YStart - YEnd;
                     for (; YDif > 0; YDif--)
                     {
-                        Map[YStart--, XEnd] = ".";
+                        givenMap[YStart--, XEnd] = ".";
                     }
                 }
                 else
@@ -231,10 +305,11 @@ namespace FogueLike
                     YDif = YEnd - YStart;
                     for (; YDif > 0; YDif--)
                     {
-                        Map[YStart++, XEnd] = ".";
+                        givenMap[YStart++, XEnd] = ".";
                     }
                 }
             }
+            return givenMap;
         }
 
         String[,] RoomGen()
@@ -267,7 +342,7 @@ namespace FogueLike
         } 
         #endregion // TODO: Improve this because it's trash.
 
-        public void PlaceObject(String[,] structure, int x, int y)
+        public String[,] PlaceObject(String[,] givenMap, String[,] structure, int x, int y)
         {
             int startX = x;
             int startY = y;
@@ -275,9 +350,9 @@ namespace FogueLike
             {
                 for (int j = 0; j < structure.GetLength(1); j++)
                 {
-                    if ((y < Map.GetLength(0) && x < Map.GetLength(1)) && (i < structure.GetLength(0) && j < structure.GetLength(1)))
+                    if ((y < givenMap.GetLength(0) && x < givenMap.GetLength(1)) && (i < structure.GetLength(0) && j < structure.GetLength(1)))
                     {
-                        Map[y, x++] = structure[i, j];
+                        givenMap[y, x++] = structure[i, j];
                     }
                     else
                     {
@@ -287,6 +362,7 @@ namespace FogueLike
                 x = startX;
                 y++;
             }
+            return givenMap;
         }
 
         public void PrintMap()
