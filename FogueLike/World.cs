@@ -12,7 +12,8 @@ namespace FogueLike
         Player p;
         String[,] Map;
         List<String[,]> currentWorld;
-        List<String> symbols;
+        List<String> symbols; // This is for things we can attack.
+        List<String> passable;
         Dictionary<String, Entity> entities;
         int worldNum;
         int entID;
@@ -28,6 +29,8 @@ namespace FogueLike
             worldNum = 0;
             entID = 0;
 
+            passable = new List<String>();
+            passable.Add("."); passable.Add("x");
             symbols = new List<String>();
             symbols.Add("g");
 
@@ -48,7 +51,7 @@ namespace FogueLike
             {
                 c = Console.ReadKey();
                 #region Movement Controls
-                if (c.Key == ConsoleKey.UpArrow && (Map[p.position.Y - 1, p.position.X].Equals(".") || Map[p.position.Y - 1, p.position.X].Equals(">") || Map[p.position.Y - 1, p.position.X].Equals("<")))
+                if (c.Key == ConsoleKey.UpArrow && (passable.Contains(Map[p.position.Y - 1, p.position.X]) || Map[p.position.Y - 1, p.position.X].Equals(">") || Map[p.position.Y - 1, p.position.X].Equals("<")))
                 {
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write(tempSpot);
@@ -59,7 +62,7 @@ namespace FogueLike
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write("@");
                 }
-                if (c.Key == ConsoleKey.DownArrow && (Map[p.position.Y + 1, p.position.X].Equals(".") || Map[p.position.Y + 1, p.position.X].Equals(">") || Map[p.position.Y + 1, p.position.X].Equals("<")))
+                if (c.Key == ConsoleKey.DownArrow && (passable.Contains(Map[p.position.Y + 1, p.position.X]) || Map[p.position.Y + 1, p.position.X].Equals(">") || Map[p.position.Y + 1, p.position.X].Equals("<")))
                 {
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write(tempSpot);
@@ -70,7 +73,7 @@ namespace FogueLike
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write("@");
                 }
-                if (c.Key == ConsoleKey.LeftArrow && (Map[p.position.Y, p.position.X - 1].Equals(".") || Map[p.position.Y, p.position.X - 1].Equals(">") || Map[p.position.Y, p.position.X - 1].Equals("<")))
+                if (c.Key == ConsoleKey.LeftArrow && (passable.Contains(Map[p.position.Y, p.position.X - 1]) || Map[p.position.Y, p.position.X - 1].Equals(">") || Map[p.position.Y, p.position.X - 1].Equals("<")))
                 {
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write(tempSpot);
@@ -81,7 +84,7 @@ namespace FogueLike
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write("@");
                 }
-                if (c.Key == ConsoleKey.RightArrow && (Map[p.position.Y, p.position.X + 1].Equals(".") || Map[p.position.Y, p.position.X + 1].Equals(">") || Map[p.position.Y, p.position.X + 1].Equals("<")))
+                if (c.Key == ConsoleKey.RightArrow && (passable.Contains(Map[p.position.Y, p.position.X + 1]) || Map[p.position.Y, p.position.X + 1].Equals(">") || Map[p.position.Y, p.position.X + 1].Equals("<")))
                 {
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write(tempSpot);
@@ -101,7 +104,7 @@ namespace FogueLike
                     {
                         if (s.pos.X == p.position.X + 1 && s.pos.Y == p.position.Y)
                         {
-                            s.decHP(p.equipped[0]);
+                            s.decHP(p.equipped[0]); // TODO: We'll have to change this to whatever the player's inventory atk power adds up to.
                             Map[p.position.Y, p.position.X + 1] = s.GetSymbol();
                             Console.SetCursorPosition(p.position.X + 1, p.position.Y);
                             Console.Write(Map[p.position.Y, p.position.X + 1]);
