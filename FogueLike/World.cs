@@ -28,10 +28,10 @@ namespace FogueLike
                 currentWorld.Add(WorldGen(y));
             }
             Map = currentWorld[worldNum];
-            SpawnChars();
+            SpawnPlayer();
             PrintMap();
 
-            Console.WriteLine("Press V to generate a new map. Press ESC to quit.");
+            Console.WriteLine("Press J to travel up/down stairs. Press ESC to quit.");
             ConsoleKeyInfo c;
             String tempSpot = "."; // holds the place of the last thing we step on.
 
@@ -119,14 +119,19 @@ namespace FogueLike
                 {
                     Console.Clear();
                     Map = currentWorld[worldNum++];
-                    SpawnChars();
+                    SpawnPlayer();
                     PrintMap();
-                    Console.WriteLine("Press V to generate a new map. Press ESC to quit.");
+                    Console.WriteLine("Press J to travel up/down stairs. Press ESC to quit.");
                 }
             } while (c.Key != ConsoleKey.Escape);
         }
 
-        public void SpawnChars()
+        public void SpawnEntites() // to be called at initial map/level creation
+        {
+
+        }
+
+        public void SpawnPlayer() // TODO: Split this up, have seperate method that initally places player, and make this one the one that spawns entities.
         {
             // Place the player.
             Boolean playerPlaced = false;
