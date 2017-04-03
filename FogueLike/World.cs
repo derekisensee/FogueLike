@@ -3,21 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Timers;
 
 namespace FogueLike
 {
     public class World
     {
         Player p;
-        String[,] Map;
-        List<String[,]> currentWorld;
+        String[,] Map; // Current map.
+        List<String[,]> currentWorld; // List of maps.
         List<String> symbols; // This is for things we can attack.
-        List<String> passable;
+        List<String> passable; // This is for things we can walk over.
         Dictionary<String, Entity> entities;
         int worldNum;
         int entID;
-
         Random r = new Random();
         
         public World(int y)
@@ -42,6 +41,7 @@ namespace FogueLike
             SpawnPlayer();
             PrintMap();
 
+            Console.SetCursorPosition(0, Map.GetLength(0) + 1);
             Console.WriteLine("Press J to travel up/down stairs. Press ESC to quit.");
             ConsoleKeyInfo c;
             String tempSpot = "."; // holds the place of the last thing we step on.
@@ -106,6 +106,7 @@ namespace FogueLike
                         {
                             s.decHP(p.equipped[0]); // TODO: We'll have to change this to whatever the player's inventory atk power adds up to.
                             Map[p.position.Y, p.position.X + 1] = s.GetSymbol();
+                            s.Attack(p);
                             Console.SetCursorPosition(p.position.X + 1, p.position.Y);
                             Console.Write(Map[p.position.Y, p.position.X + 1]);
                             Console.SetCursorPosition(0, 0);
@@ -185,7 +186,8 @@ namespace FogueLike
                 }
                 #endregion
 
-
+                Console.SetCursorPosition(0, Map.GetLength(0));
+                Console.Write("HP:" + p.GetCurrentHP() + "/" + p.GetMaxHP());
             } while (c.Key != ConsoleKey.Escape);
         }
 
@@ -254,16 +256,16 @@ namespace FogueLike
                 if (tempMap[YStair, XStair].Equals("."))
                 {
                     tempMap[YStair, XStair] = ">";
-                    if (tempMap[YStair, XStair - 1].Equals("."))
-                    {
-                        Player.Point backPoint = new Player.Point();
-                        backPoint.X = XStair - 1; backPoint.Y = YStair;
-                        p.downStairPositions.Add(backPoint);
-                    }
-                    else if (tempMap[YStair, XStair + 1].Equals("."))
+                    if (tempMap[YStair, XStair + 1].Equals("."))
                     {
                         Player.Point backPoint = new Player.Point();
                         backPoint.X = XStair + 1; backPoint.Y = YStair;
+                        p.downStairPositions.Add(backPoint);
+                    }
+                    else if (tempMap[YStair, XStair - 1].Equals("."))
+                    {
+                        Player.Point backPoint = new Player.Point();
+                        backPoint.X = XStair - 1; backPoint.Y = YStair;
                         p.downStairPositions.Add(backPoint);
                     }
                     else if (tempMap[YStair - 1, XStair].Equals("."))

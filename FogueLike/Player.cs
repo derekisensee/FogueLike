@@ -8,6 +8,8 @@ namespace FogueLike
 {
     public class Player
     {
+        int currentHP;
+        int maxHP;
         public List<Item> inventory;
         public List<Item> equipped;
 
@@ -42,8 +44,10 @@ namespace FogueLike
         public List<Point> downStairPositions;
         public List<Point> upStairPositions;
 
-        public Player ()
+        public Player()
         {
+            maxHP = 400;
+            currentHP = maxHP;
             inventory = new List<Item>();
             equipped = new List<Item>();
 
@@ -60,5 +64,14 @@ namespace FogueLike
             position.X = 30;
             position.Y = 20;
         }
+
+        public void DecHP(int atk)
+        {
+            currentHP -= atk;
+        }
+
+        public int GetMaxHP() { return maxHP; }
+
+        public int GetCurrentHP() { return currentHP; }
     }
 }
