@@ -59,6 +59,9 @@ namespace FogueLike
 
             inventory = new List<Item>();
             equipped = new List<Item>();
+
+            equipped.Add(new Item("sword", 5));
+
             pos = new Point();
             pos.X = x;
             pos.Y = y;
@@ -89,7 +92,11 @@ namespace FogueLike
 
         public void Attack(Entity e)
         {
-
+            Random r = new Random();
+            if (r.Next(0, 100) > missChance)
+            {
+                e.decHP(equipped[0]);
+            }
         }
     }
 }

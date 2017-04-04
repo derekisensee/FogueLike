@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace FogueLike
 {
@@ -11,10 +10,10 @@ namespace FogueLike
         String name;
         int atk;
 
-        public Item(String name)
+        public Item(String name, int atk)
         {
             name = this.name;
-            atk = 5;
+            atk = this.atk;
         }
 
         public int getATK()
