@@ -10,7 +10,7 @@ namespace FogueLike
     public class World
     {
         Player p;
-        public String[,] map; // Current map.
+        public String[,] Map; // Current map.
         List<String[,]> currentWorld; // List of maps.
         List<String> symbols; // This is for things we can attack.
         List<String> passable; // This is for things we can walk over.
@@ -23,31 +23,203 @@ namespace FogueLike
         public List<string> Symbols { get => symbols; set => symbols = value; }
         public List<string[,]> CurrentWorld { get => currentWorld; set => currentWorld = value; }
         public Dictionary<string, Entity> Entities { get => entities; set => entities = value; }
-        public string[,] Map { get => map; set => map = value; }
+        //public string[,] Map { get => map; set => map = value; }
         public Player P { get => p; set => p = value; }
         public int WorldNum { get => worldNum; set => worldNum = value; }
 
         public World(int y)
         {
-            map = new String[y, 150];
+            Map = new String[y, 150];
             p = new Player();
-            CurrentWorld = new List<String[,]>();
-            Entities = new Dictionary<string, Entity>();
+            currentWorld = new List<String[,]>();
+            entities = new Dictionary<string, Entity>();
             worldNum = 0;
             entID = 0;
 
-            Passable = new List<String>();
-            Passable.Add("."); Passable.Add("x");
-            Symbols = new List<String>();
-            Symbols.Add("g");
+            passable = new List<String>();
+            passable.Add("."); passable.Add("x");
+            symbols = new List<String>();
+            symbols.Add("g");
 
             int floors = 5;
             while (floors-- > 0) {
                 CurrentWorld.Add(WorldGen(y));
             }
-            map = CurrentWorld[worldNum];
+            Map = CurrentWorld[worldNum];
             SpawnPlayer();
-            PrintMap();            
+            PrintMap();
+
+            Console.SetCursorPosition(0, Map.GetLength(0) + 1);
+            Console.WriteLine("Press J to travel up/down stairs. Press ESC to quit.");
+            ConsoleKeyInfo c;
+            String tempSpot = "."; // holds the place of the last thing we step on.
+
+            // This loop is where the gameplay takes place.
+            do
+            {
+                c = Console.ReadKey();
+                #region Movement Controls
+                if (c.Key == ConsoleKey.UpArrow && (passable.Contains(Map[p.position.Y - 1, p.position.X]) || Map[p.position.Y - 1, p.position.X].Equals(">") || Map[p.position.Y - 1, p.position.X].Equals("<")))
+                {
+                    Console.SetCursorPosition(p.position.X, p.position.Y);
+                    Console.Write(tempSpot);
+                    Map[p.position.Y, p.position.X] = tempSpot;
+                    p.position.Y -= 1;
+                    tempSpot = Map[p.position.Y, p.position.X];
+                    PlacePlayer();
+                    Console.SetCursorPosition(p.position.X, p.position.Y);
+                    Console.Write("@");
+                }
+                if (c.Key == ConsoleKey.DownArrow && (passable.Contains(Map[p.position.Y + 1, p.position.X]) || Map[p.position.Y + 1, p.position.X].Equals(">") || Map[p.position.Y + 1, p.position.X].Equals("<")))
+                {
+                    Console.SetCursorPosition(p.position.X, p.position.Y);
+                    Console.Write(tempSpot);
+                    Map[p.position.Y, p.position.X] = tempSpot;
+                    p.position.Y += 1;
+                    tempSpot = Map[p.position.Y, p.position.X];
+                    PlacePlayer();
+                    Console.SetCursorPosition(p.position.X, p.position.Y);
+                    Console.Write("@");
+                }
+                if (c.Key == ConsoleKey.LeftArrow && (passable.Contains(Map[p.position.Y, p.position.X - 1]) || Map[p.position.Y, p.position.X - 1].Equals(">") || Map[p.position.Y, p.position.X - 1].Equals("<")))
+                {
+                    Console.SetCursorPosition(p.position.X, p.position.Y);
+                    Console.Write(tempSpot);
+                    Map[p.position.Y, p.position.X] = tempSpot;
+                    p.position.X -= 1;
+                    tempSpot = Map[p.position.Y, p.position.X];
+                    PlacePlayer();
+                    Console.SetCursorPosition(p.position.X, p.position.Y);
+                    Console.Write("@");
+                }
+                if (c.Key == ConsoleKey.RightArrow && (passable.Contains(Map[p.position.Y, p.position.X + 1]) || Map[p.position.Y, p.position.X + 1].Equals(">") || Map[p.position.Y, p.position.X + 1].Equals("<")))
+                {
+                    Console.SetCursorPosition(p.position.X, p.position.Y);
+                    Console.Write(tempSpot);
+                    Map[p.position.Y, p.position.X] = tempSpot;
+                    p.position.X += 1;
+                    tempSpot = Map[p.position.Y, p.position.X];
+                    PlacePlayer();
+                    Console.SetCursorPosition(p.position.X, p.position.Y);
+                    Console.Write("@");
+                }
+                Console.SetCursorPosition(0, 0);
+                #endregion
+                #region Attack Stuff
+                if (c.Key == ConsoleKey.RightArrow && symbols.Contains(Map[p.position.Y, p.position.X + 1]))
+                {
+                    foreach (Entity s in entities.Values)
+                    {
+                        if (s.pos.X == p.position.X + 1 && s.pos.Y == p.position.Y)
+                        {
+                            s.decHP(p.equipped[0]);
+                            if (!(s.Symbol.Equals("x")))
+                            {
+                                s.Attack(p);
+                            }
+                            else
+                            {
+                                Map[p.position.Y, p.position.X + 1] = s.Symbol;
+                                Console.SetCursorPosition(p.position.X + 1, p.position.Y);
+                                Console.Write(Map[p.position.Y, p.position.X + 1]);
+                            }
+                        }
+                    }
+                }
+                if (c.Key == ConsoleKey.LeftArrow && symbols.Contains(Map[p.position.Y, p.position.X - 1]))
+                {
+                    foreach (Entity s in entities.Values)
+                    {
+                        if (s.pos.X == p.position.X - 1 && s.pos.Y == p.position.Y)
+                        {
+                            s.decHP(p.equipped[0]);
+                            if (!(s.Symbol.Equals("x")))
+                            {
+                                s.Attack(p);
+                            }
+                            else
+                            {
+                                Map[p.position.Y, p.position.X - 1] = s.GetSymbol();
+                                Console.SetCursorPosition(p.position.X - 1, p.position.Y);
+                                Console.Write(Map[p.position.Y, p.position.X - 1]);
+                            }
+                        }
+                    }
+                }
+                if (c.Key == ConsoleKey.DownArrow && symbols.Contains(Map[p.position.Y + 1, p.position.X]))
+                {
+                    foreach (Entity s in entities.Values)
+                    {
+                        if (s.pos.X == p.position.X && s.pos.Y == p.position.Y + 1)
+                        {
+                            s.decHP(p.equipped[0]);
+                            if (!(s.Symbol.Equals("x")))
+                            {
+                                s.Attack(p);
+                            }
+                            else
+                            {
+                                Map[p.position.Y + 1, p.position.X] = s.GetSymbol();
+                                Console.SetCursorPosition(p.position.X, p.position.Y + 1);
+                                Console.Write(Map[p.position.Y + 1, p.position.X]);
+                            }
+                        }
+                    }
+                }
+                if (c.Key == ConsoleKey.UpArrow && symbols.Contains(Map[p.position.Y - 1, p.position.X]))
+                {
+                    foreach (Entity s in entities.Values)
+                    {
+                        if (s.pos.X == p.position.X && s.pos.Y == p.position.Y - 1)
+                        {
+                            s.decHP(p.equipped[0]);
+                            if (!(s.Symbol.Equals("x")))
+                            {
+                                s.Attack(p);
+                            }
+                            else
+                            {
+                                Map[p.position.Y - 1, p.position.X] = s.GetSymbol();
+                                Console.SetCursorPosition(p.position.X, p.position.Y - 1);
+                                Console.Write(Map[p.position.Y - 1, p.position.X]);
+                            }
+                        }
+                    }
+                }
+                #endregion
+                #region Stair Stuff
+                // moving down a floor.
+                if (c.Key == ConsoleKey.J && tempSpot.Equals(">"))
+                {
+                    Console.Clear();
+                    // This prevents the stairs from becoming the player if we return to this floor.
+                    Map[p.position.Y, p.position.X] = ">";
+                    currentWorld[worldNum] = Map;
+
+                    // Load the next map
+                    Map = currentWorld[++worldNum];
+                    Map[p.upStairPositions[worldNum].Y, p.upStairPositions[worldNum].X] = "@";
+                    p.position.X = p.upStairPositions[worldNum].X; p.position.Y = p.upStairPositions[worldNum].Y;
+                    tempSpot = ".";
+                    PrintMap();
+                }
+                // moving up a floor.
+                if (c.Key == ConsoleKey.J && tempSpot.Equals("<"))
+                {
+                    Console.Clear();
+                    Map[p.position.Y, p.position.X] = "<";
+
+                    Map = currentWorld[--worldNum];
+                    Map[p.downStairPositions[worldNum].Y, p.downStairPositions[worldNum].X] = "@";
+                    p.position.X = p.downStairPositions[worldNum].X; p.position.Y = p.downStairPositions[worldNum].Y;
+                    tempSpot = ".";
+                    PrintMap();
+                }
+                #endregion
+
+                Console.SetCursorPosition(0, Map.GetLength(0));
+                Console.Write("HP:" + p.GetCurrentHP() + "/" + p.GetMaxHP());
+            } while (c.Key != ConsoleKey.Escape);
         }
 
         public void SpawnPlayer() // TODO: Split this up, have seperate method that initally places player, and make this one the one that spawns entities.
@@ -56,11 +228,11 @@ namespace FogueLike
             Boolean playerPlaced = false;
             do
             {
-                int XSpawn = r.Next(1, map.GetLength(1) - 1);
-                int YSpawn = r.Next(1, map.GetLength(0) - 1);
-                if (map[YSpawn, XSpawn].Equals("."))
+                int XSpawn = r.Next(1, Map.GetLength(1) - 1);
+                int YSpawn = r.Next(1, Map.GetLength(0) - 1);
+                if (Map[YSpawn, XSpawn].Equals("."))
                 {
-                    map[YSpawn, XSpawn] = "@";
+                    Map[YSpawn, XSpawn] = "@";
                     p.position.X = XSpawn;
                     p.position.Y = YSpawn;
                     PlacePlayer();
@@ -71,7 +243,7 @@ namespace FogueLike
 
         public void PlacePlayer()
         {
-            map[p.position.Y, p.position.X] = "@";
+            Map[p.position.Y, p.position.X] = "@";
         }
 
         #region World Generation Stuffs
@@ -79,9 +251,9 @@ namespace FogueLike
         {
             String[,] tempMap = new String[y, 150];
             // Fill the entire map.
-            for (int i = 0; i < map.GetLength(0); i++)
+            for (int i = 0; i < Map.GetLength(0); i++)
             {
-                for (int j = 0; j < map.GetLength(1); j++)
+                for (int j = 0; j < Map.GetLength(1); j++)
                 {
                     tempMap[i, j] = " ";
                 }
@@ -103,7 +275,7 @@ namespace FogueLike
             for (int i = 0; i < tempMap.GetLength(0); i++)
             {
                 tempMap[i, 0] = "X";
-                tempMap[i, map.GetLength(1) - 1] = "X";
+                tempMap[i, Map.GetLength(1) - 1] = "X";
             }
             ///////
             Boolean downStairPlaced = false;
@@ -187,8 +359,8 @@ namespace FogueLike
                 Boolean placed = false;
                 do
                 {
-                    int xVal = r.Next(1, map.GetLength(1) - 1);
-                    int yVal = r.Next(1, map.GetLength(0) - 1);
+                    int xVal = r.Next(1, Map.GetLength(1) - 1);
+                    int yVal = r.Next(1, Map.GetLength(0) - 1);
                     if (tempMap[yVal, xVal].Equals("."))
                     {
                         placed = true;
@@ -309,11 +481,11 @@ namespace FogueLike
         public void PrintMap()
         {
             Console.SetCursorPosition(0, 0);
-            for (int i = 0; i < map.GetLength(0); i++)
+            for (int i = 0; i < Map.GetLength(0); i++)
             {
-                for (int j = 0; j < map.GetLength(1); j++)
+                for (int j = 0; j < Map.GetLength(1); j++)
                 {
-                    Console.Write(map[i, j]);
+                    Console.Write(Map[i, j]);
                 }
                 Console.WriteLine();
             }

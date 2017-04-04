@@ -10,7 +10,7 @@ namespace FogueLike
     {
         public TurnHandler()
         {
-
+            World w = new World(55);
         }
     }
 }

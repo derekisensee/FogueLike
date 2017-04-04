@@ -10,16 +10,17 @@ namespace FogueLike
         String name;
         int atk;
 
-        public Item(String name, int atk)
+        public Item(String n, int a)
         {
-            name = this.name;
-            atk = this.atk;
+            name = n;
+            atk = a;
         }
 
         public int getATK()
         {
-            Random r = new Random();
-            return r.Next(atk - 2, atk + 2);
+            //Random r = new Random();
+            //return r.Next(atk, atk + 2);
+            return atk;
         }
     }
 }

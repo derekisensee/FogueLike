@@ -1,4 +1,5 @@
-﻿using System;
+﻿// This file is for enemies.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,8 @@ namespace FogueLike
         List<Item> inventory;
         List<Item> equipped;
         int missChance;
+
+        public string Symbol { get => symbol; set => symbol = value; }
 
         public struct Point
         {
@@ -70,6 +73,11 @@ namespace FogueLike
         public String GetSymbol()
         {
             return symbol;
+        }
+
+        public int GetHP()
+        {
+            return hp;
         }
 
         public void decHP(Item i) // TODO: Make it where we are decreasing HP by all equipped items by a thing instead of just 1 item.
