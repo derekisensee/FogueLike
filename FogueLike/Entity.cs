@@ -12,6 +12,7 @@ namespace FogueLike
         String symbol;
         int hp;
         int atk;
+        int speed;
 
         public Point pos;
         List<Item> inventory;
@@ -54,6 +55,7 @@ namespace FogueLike
             hp = 20;
             missChance = 40;
             atk = 5;
+            speed = 30;
 
             inventory = new List<Item>();
             equipped = new List<Item>();
