@@ -7,8 +7,8 @@ namespace FogueLike
     {
         public static void Main(string[] args)
         {
-            World w = new World(55);
-            //TurnHandler t = new TurnHandler();
+            //World w = new World(55);
+            TurnHandler t = new TurnHandler();
         }
     }
 }
