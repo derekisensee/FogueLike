@@ -139,7 +139,7 @@ namespace FogueLike
                             }
                             else
                             {
-                                Map[p.position.Y, p.position.X - 1] = s.GetSymbol();
+                                Map[p.position.Y, p.position.X - 1] = s.Symbol;
                                 Console.SetCursorPosition(p.position.X - 1, p.position.Y);
                                 Console.Write(Map[p.position.Y, p.position.X - 1]);
                             }
@@ -159,7 +159,7 @@ namespace FogueLike
                             }
                             else
                             {
-                                Map[p.position.Y + 1, p.position.X] = s.GetSymbol();
+                                Map[p.position.Y + 1, p.position.X] = s.Symbol;
                                 Console.SetCursorPosition(p.position.X, p.position.Y + 1);
                                 Console.Write(Map[p.position.Y + 1, p.position.X]);
                             }
@@ -179,7 +179,7 @@ namespace FogueLike
                             }
                             else
                             {
-                                Map[p.position.Y - 1, p.position.X] = s.GetSymbol();
+                                Map[p.position.Y - 1, p.position.X] = s.Symbol;
                                 Console.SetCursorPosition(p.position.X, p.position.Y - 1);
                                 Console.Write(Map[p.position.Y - 1, p.position.X]);
                             }
@@ -366,7 +366,7 @@ namespace FogueLike
                         placed = true;
                         Entity e = new Entity(xVal, yVal);
                         Entities.Add(entID + "", e);
-                        tempMap[yVal, xVal] = Entities[entID + ""].GetSymbol();
+                        tempMap[yVal, xVal] = Entities[entID + ""].Symbol;
                         entID++;
                     }
                 } while (placed == false);
@@ -453,7 +453,7 @@ namespace FogueLike
             }
             return Room;
         } 
-        #endregion // TODO: Improve this because it's trash.
+        
 
         public String[,] PlaceObject(String[,] givenMap, String[,] structure, int x, int y)
         {
@@ -488,6 +488,15 @@ namespace FogueLike
                     Console.Write(Map[i, j]);
                 }
                 Console.WriteLine();
+            }
+        }
+        #endregion // TODO: Improve this because it's trash.
+
+        void WorldStep()
+        {
+            foreach (Entity s in entities.Values)
+            {
+                s.Decide(p, Map);
             }
         }
     }

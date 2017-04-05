@@ -20,7 +20,11 @@ namespace FogueLike
         List<Item> equipped;
         int missChance;
 
+        string tempSpot;
+
         public string Symbol { get => symbol; set => symbol = value; }
+        public int Hp { get => hp; set => hp = value; }
+        public string TempSpot { get => tempSpot; set => tempSpot = value; }
 
         public struct Point
         {
@@ -56,9 +60,10 @@ namespace FogueLike
             // generic stuffs.
             symbol = "g";
             hp = 20;
-            missChance = 40;
+            missChance = 50;
             atk = 5;
             speed = 30;
+            tempSpot = "";
 
             inventory = new List<Item>();
             equipped = new List<Item>();
@@ -70,14 +75,62 @@ namespace FogueLike
             pos.Y = y;
         }
 
-        public String GetSymbol()
+        public void Decide(Player p, String[,] map)
         {
-            return symbol;
+            if (CanSeePlayer(p, map))
+            {
+
+            }
         }
 
-        public int GetHP()
+        Boolean CanSeePlayer(Player p, String[,] map)
         {
-            return hp;
+            int startX = pos.X;
+            int startY = pos.Y;
+            int endX = p.position.X;
+            int endY = p.position.Y;
+
+            int difX; int difY;
+
+            if (startX > endX)
+            {
+                difX = startX - endX;
+            }
+            else
+            {
+                difX = endX - startX;
+            }
+            if (startY > endY)
+            {
+                difY = startY - endY;
+            }
+            else
+            {
+                difY = endY - startY;
+            }
+
+            for (int i = difX; i > p.position.X; i--) // TODO: Finish calculated if we have LOS to player. This is incomplete.
+            {
+                if (!(map[pos.Y, i].Equals(".")))
+                {
+                    return false;
+                }
+            }
+
+            for (int i = difY; i > p.position.)
+
+            for (int j = difY; j > 0; j--)
+            {
+                for (int i = difX; i > 0; i--)
+                {
+                    if (!(map[j, i].Equals("."))) // TODO: Make sure we are using j/i in the right order.
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         public void decHP(Item i) // TODO: Make it where we are decreasing HP by all equipped items by a thing instead of just 1 item.
