@@ -117,7 +117,10 @@ namespace FogueLike
                 }
             }
 
-            for (int i = difY; i > p.position.)
+            for (int i = difY; i > p.position.Y; i--) 
+            {
+                
+            }
 
             for (int j = difY; j > 0; j--)
             {
