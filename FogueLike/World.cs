@@ -103,6 +103,10 @@ namespace FogueLike
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write("@");
                 }
+                if (c.Key == ConsoleKey.OemPeriod)
+                {
+                    //WorldStep();
+                }
                 Console.SetCursorPosition(0, 0);
                 #endregion
                 #region Attack Stuff
@@ -217,10 +221,7 @@ namespace FogueLike
                 }
                 #endregion
 
-                foreach (Entity e in entities.Values)
-                {
-                    e.Decide(p, Map);
-                }
+                WorldStep();
 
                 Console.SetCursorPosition(0, Map.GetLength(0));
                 Console.Write("HP:" + p.GetCurrentHP() + "/" + p.GetMaxHP());

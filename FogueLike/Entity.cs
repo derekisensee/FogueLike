@@ -77,6 +77,10 @@ namespace FogueLike
 
         public void Decide(Player p, String[,] map)
         {
+            if (map[pos.Y, pos.X - 1].Equals("@") || map[pos.Y, pos.X + 1].Equals("@") || map[pos.Y - 1, pos.X].Equals("@") || map[pos.Y + 1, pos.X].Equals("@"))
+            {
+                Attack(p);
+            }
             if (CanSeePlayer(p, map))
             {
                 int startX = pos.X;
@@ -84,7 +88,7 @@ namespace FogueLike
                 int endX = p.position.X;
                 int endY = p.position.Y;
                 int difX; int difY;
-                if (startX > endX) // TODO: Reprint the entity locations. Figure out what is going on here.
+                if (startX > endX && map[pos.Y, pos.X - 1].Equals(".")) // TODO: Reprint the entity locations. Figure out what is going on here.
                 {
                     Console.SetCursorPosition(pos.X, pos.Y);
                     Console.Write(tempSpot);
@@ -93,7 +97,7 @@ namespace FogueLike
                     pos.X -= 1;
                     Console.Write(symbol);
                 }
-                else
+                else if (map[pos.Y, pos.X + 1].Equals("."))
                 {
                     Console.SetCursorPosition(pos.X, pos.Y);
                     Console.Write(tempSpot);
@@ -102,7 +106,7 @@ namespace FogueLike
                     pos.X += 1;
                     Console.Write(symbol);
                 }
-                if (startY > endY)
+                else if (startY > endY && map[pos.Y - 1, pos.X].Equals("."))
                 {
                     Console.SetCursorPosition(pos.X, pos.Y);
                     Console.Write(tempSpot);
@@ -111,7 +115,7 @@ namespace FogueLike
                     pos.Y -= 1;
                     Console.Write(symbol);
                 }
-                else
+                else if (map[pos.Y + 1, pos.X].Equals("."))
                 {
                     Console.SetCursorPosition(pos.X, pos.Y);
                     Console.Write(tempSpot);
@@ -120,8 +124,6 @@ namespace FogueLike
                     pos.Y += 1;
                     Console.Write(symbol);
                 }
-
-                
             }
         }
 
