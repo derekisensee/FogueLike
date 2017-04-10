@@ -217,6 +217,11 @@ namespace FogueLike
                 }
                 #endregion
 
+                foreach (Entity e in entities.Values)
+                {
+                    e.Decide(p, Map);
+                }
+
                 Console.SetCursorPosition(0, Map.GetLength(0));
                 Console.Write("HP:" + p.GetCurrentHP() + "/" + p.GetMaxHP());
             } while (c.Key != ConsoleKey.Escape);
@@ -364,7 +369,7 @@ namespace FogueLike
                     if (tempMap[yVal, xVal].Equals("."))
                     {
                         placed = true;
-                        Entity e = new Entity(xVal, yVal);
+                        Entity e = new Entity(xVal, yVal, Map[yVal, xVal]);
                         Entities.Add(entID + "", e);
                         tempMap[yVal, xVal] = Entities[entID + ""].Symbol;
                         entID++;

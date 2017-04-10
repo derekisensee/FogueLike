@@ -54,7 +54,7 @@ namespace FogueLike
             }
         }
 
-        public Entity(int x, int y)
+        public Entity(int x, int y, String t)
         {
             // i know it's bad to hardcode this but i'm just trying to get stuff up and running before i worry about
             // generic stuffs.
@@ -63,7 +63,7 @@ namespace FogueLike
             missChance = 50;
             atk = 5;
             speed = 30;
-            tempSpot = "";
+            tempSpot = t;
 
             inventory = new List<Item>();
             equipped = new List<Item>();
@@ -79,7 +79,49 @@ namespace FogueLike
         {
             if (CanSeePlayer(p, map))
             {
+                int startX = pos.X;
+                int startY = pos.Y;
+                int endX = p.position.X;
+                int endY = p.position.Y;
+                int difX; int difY;
+                if (startX > endX) // TODO: Reprint the entity locations. Figure out what is going on here.
+                {
+                    Console.SetCursorPosition(pos.X, pos.Y);
+                    Console.Write(tempSpot);
+                    tempSpot = map[pos.Y, pos.X - 1];
+                    Console.SetCursorPosition(pos.X - 1, pos.Y);
+                    pos.X -= 1;
+                    Console.Write(symbol);
+                }
+                else
+                {
+                    Console.SetCursorPosition(pos.X, pos.Y);
+                    Console.Write(tempSpot);
+                    tempSpot = map[pos.Y, pos.X + 1];
+                    Console.SetCursorPosition(pos.X + 1, pos.Y);
+                    pos.X += 1;
+                    Console.Write(symbol);
+                }
+                if (startY > endY)
+                {
+                    Console.SetCursorPosition(pos.X, pos.Y);
+                    Console.Write(tempSpot);
+                    tempSpot = map[pos.Y - 1, pos.X];
+                    Console.SetCursorPosition(pos.X, pos.Y - 1);
+                    pos.Y -= 1;
+                    Console.Write(symbol);
+                }
+                else
+                {
+                    Console.SetCursorPosition(pos.X, pos.Y);
+                    Console.Write(tempSpot);
+                    tempSpot = map[pos.Y + 1, pos.X];
+                    Console.SetCursorPosition(pos.X, pos.Y + 1);
+                    pos.Y += 1;
+                    Console.Write(symbol);
+                }
 
+                
             }
         }
 
@@ -119,7 +161,10 @@ namespace FogueLike
 
             for (int i = difY; i > p.position.Y; i--) 
             {
-                
+                if (!(map[i, pos.X].Equals(".")))
+                {
+                    return false;
+                }
             }
 
             for (int j = difY; j > 0; j--)
