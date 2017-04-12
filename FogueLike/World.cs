@@ -48,9 +48,10 @@ namespace FogueLike
             entities.Add(floorEnts);
             entities.Add(floorEnts);
 
-            int floors = 0;
+            int floors = -1;
             while (floors++ < 4) {
-                CurrentWorld.Add(WorldGen(y, floors));
+                CurrentWorld.Add(WorldGen(y, floors)); // TODO: This is not adding to the correct array.
+                Console.WriteLine(floors + "!!!!!!!!!!!!!!!!");
             }
             Map = CurrentWorld[worldNum];
             SpawnPlayer();
@@ -239,7 +240,7 @@ namespace FogueLike
                     Console.WriteLine("UNITS");
                     foreach (Entity e in entities[worldNum].Values)
                     {
-                        Console.WriteLine(e.Symbol + "\t" + e.pos.X + " " + e.pos.Y);
+                        Console.WriteLine(e.Symbol + "\t" + e.pos.X + " " + e.pos.Y + "\t" + worldNum);
                     }
                     ConsoleKeyInfo a = Console.ReadKey();
                     do
@@ -248,9 +249,8 @@ namespace FogueLike
                     } while (a.Key != ConsoleKey.Escape);
                     PrintMap();
                 }
-
                 //PrintMap(); // This is more for debugging purposes, performance is too poor when this is uncommented.
-
+                
                 Console.SetCursorPosition(0, Map.GetLength(0));
                 Console.Write("HP:" + p.GetCurrentHP() + "/" + p.GetMaxHP());
             } while (c.Key != ConsoleKey.Escape);
@@ -388,7 +388,6 @@ namespace FogueLike
 
             #region Entity Spawning
             int numEnts = r.Next(8, 10);
-            //entities.Add(new Dictionary<String, Entity>());
             while (numEnts-- > 0)
             {
                 Boolean placed = false;
