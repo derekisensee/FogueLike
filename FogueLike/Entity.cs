@@ -92,7 +92,9 @@ namespace FogueLike
                 {
                     Console.SetCursorPosition(pos.X, pos.Y);
                     Console.Write(tempSpot);
+                    map[pos.Y, pos.X] = tempSpot;
                     tempSpot = map[pos.Y, pos.X - 1];
+                    map[pos.Y, pos.X - 1] = symbol;
                     Console.SetCursorPosition(pos.X - 1, pos.Y);
                     pos.X -= 1;
                     Console.Write(symbol);
@@ -101,7 +103,9 @@ namespace FogueLike
                 {
                     Console.SetCursorPosition(pos.X, pos.Y);
                     Console.Write(tempSpot);
+                    map[pos.Y, pos.X] = tempSpot;
                     tempSpot = map[pos.Y, pos.X + 1];
+                    map[pos.Y, pos.X + 1] = symbol;
                     Console.SetCursorPosition(pos.X + 1, pos.Y);
                     pos.X += 1;
                     Console.Write(symbol);
@@ -110,7 +114,9 @@ namespace FogueLike
                 {
                     Console.SetCursorPosition(pos.X, pos.Y);
                     Console.Write(tempSpot);
+                    map[pos.Y, pos.X] = tempSpot;
                     tempSpot = map[pos.Y - 1, pos.X];
+                    map[pos.Y - 1, pos.X] = symbol;
                     Console.SetCursorPosition(pos.X, pos.Y - 1);
                     pos.Y -= 1;
                     Console.Write(symbol);
@@ -119,11 +125,17 @@ namespace FogueLike
                 {
                     Console.SetCursorPosition(pos.X, pos.Y);
                     Console.Write(tempSpot);
+                    map[pos.Y, pos.X] = tempSpot;
                     tempSpot = map[pos.Y + 1, pos.X];
+                    map[pos.Y + 1, pos.X] = symbol;
                     Console.SetCursorPosition(pos.X, pos.Y + 1);
                     pos.Y += 1;
                     Console.Write(symbol);
                 }
+            }
+            else
+            {
+                RandomMove(map);
             }
         }
 
@@ -181,6 +193,43 @@ namespace FogueLike
             }
 
             return true;
+        }
+
+        void RandomMove(String[,] m)
+        {
+            Random r = new Random();
+            int n = r.Next(0, 6);
+            if (n == 0)
+            {
+                pos.X = pos.X;
+                pos.Y = pos.Y;
+            }
+            if (n == 1)
+            {
+                pos.X = pos.X;
+                pos.Y = pos.Y;
+            }
+            if (n == 2)
+            {
+                pos.X = pos.X;
+                pos.Y = pos.Y;
+            }
+            if (n == 3 && m[pos.Y, pos.X + 1].Equals("."))
+            {
+                pos.X += 1;
+            }
+            if (n == 4 && m[pos.Y, pos.X - 1].Equals("."))
+            {
+                pos.X -= 1;
+            }
+            if (n == 5 && m[pos.Y + 1, pos.X].Equals("."))
+            {
+                pos.Y += 1;
+            }
+            if (n == 6 && m[pos.Y - 1, pos.X].Equals("."))
+            {
+                pos.Y -= 1;
+            }
         }
 
         public void decHP(Item i) // TODO: Make it where we are decreasing HP by all equipped items by a thing instead of just 1 item.
