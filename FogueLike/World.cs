@@ -51,8 +51,8 @@ namespace FogueLike
             int floors = -1;
             while (floors++ < 4) {
                 CurrentWorld.Add(WorldGen(y, floors)); // TODO: This is not adding to the correct array.
-                Console.WriteLine(floors + "!!!!!!!!!!!!!!!!");
             }
+
             Map = CurrentWorld[worldNum];
             SpawnPlayer();
             PrintMap();
@@ -249,7 +249,7 @@ namespace FogueLike
                     } while (a.Key != ConsoleKey.Escape);
                     PrintMap();
                 }
-                //PrintMap(); // This is more for debugging purposes, performance is too poor when this is uncommented.
+                PrintMap(); // This is more for debugging purposes, performance is too poor when this is uncommented.
                 
                 Console.SetCursorPosition(0, Map.GetLength(0));
                 Console.Write("HP:" + p.GetCurrentHP() + "/" + p.GetMaxHP());
@@ -387,7 +387,7 @@ namespace FogueLike
             } while (upStairPlaced == false);
 
             #region Entity Spawning
-            int numEnts = r.Next(8, 10);
+            int numEnts = r.Next(2, 8);
             while (numEnts-- > 0)
             {
                 Boolean placed = false;
@@ -400,7 +400,7 @@ namespace FogueLike
                         placed = true;
                         Entity e = new Entity(xVal, yVal, Map[yVal, xVal]);
                         entities[floor].Add(entID + "", e);
-                        tempMap[yVal, xVal] = entities[floor][entID + ""].Symbol;
+                        tempMap[yVal, xVal] = entities[floor][entID + ""].Symbol; // I think we might be getting issues here?
                         entID++;
                     }
                 } while (placed == false);
@@ -531,6 +531,8 @@ namespace FogueLike
             foreach (Entity e in entities[worldNum].Values)
             {
                 e.Decide(p, Map);
+                Map[e.pos.Y, e.pos.X] = "g";
+                Map[e.tempPos.Y, e.tempPos.X] = e.TempSpot;
             }
         }
     }
