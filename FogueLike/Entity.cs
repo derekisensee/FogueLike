@@ -15,11 +15,14 @@ namespace FogueLike
         int atk;
         int speed;
 
+        Random r = new Random();
+
         public Point pos;
         public Point tempPos;
 
         List<Item> inventory;
         List<Item> equipped;
+        List<String> passable;
         int missChance;
 
         string tempSpot;
@@ -70,6 +73,11 @@ namespace FogueLike
             tempSpot = ".";
             tempPos.X = x; tempPos.Y = y;
 
+            r = new Random();
+
+            passable = new List<String>();
+            passable.Add("."); passable.Add("x");
+
             inventory = new List<Item>();
             equipped = new List<Item>();
 
@@ -82,69 +90,71 @@ namespace FogueLike
 
         public void Decide(Player p, String[,] map)
         {
-            //Console.WriteLine(Map.Rank); // This says that our map is not a reference to an object...
-            if (map[pos.Y, pos.X - 1].Equals("@") || map[pos.Y, pos.X + 1].Equals("@") || map[pos.Y - 1, pos.X].Equals("@") || map[pos.Y + 1, pos.X].Equals("@"))
+            if (!(symbol.Equals("x")))
             {
-                Attack(p);
-            }
-            if (CanSeePlayer(p, map))
-            {
-                int startX = pos.X;
-                int startY = pos.Y;
-                int endX = p.position.X;
-                int endY = p.position.Y;
-                int difX; int difY;
-                if (startX > endX && map[pos.Y, pos.X - 1].Equals(".")) // TODO: Reprint the entity locations. Figure out what is going on here.
+                if (map[pos.Y, pos.X - 1].Equals("@") || map[pos.Y, pos.X + 1].Equals("@") || map[pos.Y - 1, pos.X].Equals("@") || map[pos.Y + 1, pos.X].Equals("@"))
                 {
-                    Console.SetCursorPosition(pos.X, pos.Y);
-                    Console.Write(tempSpot);
+                    Attack(p);
+                }
+                if (CanSeePlayer(p, map))
+                {
+                    int startX = pos.X;
+                    int startY = pos.Y;
+                    int endX = p.position.X;
+                    int endY = p.position.Y;
+                    int difX; int difY;
+                    if (startX > endX && passable.Contains(map[pos.Y, pos.X - 1])) // TODO: Reprint the entity locations. Figure out what is going on here.
+                    {
+                        Console.SetCursorPosition(pos.X, pos.Y);
+                        Console.Write(tempSpot);
 
-                    map[pos.Y, pos.X] = tempSpot;
-                    tempSpot = map[pos.Y, pos.X - 1];
-                    map[pos.Y, pos.X - 1] = symbol;
+                        map[pos.Y, pos.X] = tempSpot;
+                        tempSpot = map[pos.Y, pos.X - 1];
+                        map[pos.Y, pos.X - 1] = symbol;
 
-                    Console.SetCursorPosition(pos.X - 1, pos.Y);
-                    pos.X -= 1;
-                    Console.Write(symbol);
+                        Console.SetCursorPosition(pos.X - 1, pos.Y);
+                        pos.X -= 1;
+                        Console.Write(symbol);
+                    }
+                    else if (passable.Contains(map[pos.Y, pos.X + 1]))
+                    {
+                        Console.SetCursorPosition(pos.X, pos.Y);
+                        Console.Write(tempSpot);
+                        map[pos.Y, pos.X] = tempSpot;
+                        tempSpot = map[pos.Y, pos.X + 1];
+                        map[pos.Y, pos.X + 1] = symbol;
+                        Console.SetCursorPosition(pos.X + 1, pos.Y);
+                        pos.X += 1;
+                        Console.Write(symbol);
+                    }
+                    else if (startY > endY && passable.Contains(map[pos.Y - 1, pos.X]))
+                    {
+                        Console.SetCursorPosition(pos.X, pos.Y);
+                        Console.Write(tempSpot);
+                        map[pos.Y, pos.X] = tempSpot;
+                        tempSpot = map[pos.Y - 1, pos.X];
+                        map[pos.Y - 1, pos.X] = symbol;
+                        Console.SetCursorPosition(pos.X, pos.Y - 1);
+                        pos.Y -= 1;
+                        Console.Write(symbol);
+                    }
+                    else if (passable.Contains(map[pos.Y + 1, pos.X]))
+                    {
+                        Console.SetCursorPosition(pos.X, pos.Y);
+                        Console.Write(tempSpot);
+                        map[pos.Y, pos.X] = tempSpot;
+                        tempSpot = map[pos.Y + 1, pos.X];
+                        map[pos.Y + 1, pos.X] = symbol;
+                        Console.SetCursorPosition(pos.X, pos.Y + 1);
+                        pos.Y += 1;
+                        Console.Write(symbol);
+                    }
                 }
-                else if (map[pos.Y, pos.X + 1].Equals("."))
+                else
                 {
-                    Console.SetCursorPosition(pos.X, pos.Y);
-                    Console.Write(tempSpot);
-                    map[pos.Y, pos.X] = tempSpot;
-                    tempSpot = map[pos.Y, pos.X + 1];
-                    map[pos.Y, pos.X + 1] = symbol;
-                    Console.SetCursorPosition(pos.X + 1, pos.Y);
-                    pos.X += 1;
-                    Console.Write(symbol);
+                    RandomMove(map);
                 }
-                else if (startY > endY && map[pos.Y - 1, pos.X].Equals("."))
-                {
-                    Console.SetCursorPosition(pos.X, pos.Y);
-                    Console.Write(tempSpot);
-                    map[pos.Y, pos.X] = tempSpot;
-                    tempSpot = map[pos.Y - 1, pos.X];
-                    map[pos.Y - 1, pos.X] = symbol;
-                    Console.SetCursorPosition(pos.X, pos.Y - 1);
-                    pos.Y -= 1;
-                    Console.Write(symbol);
-                }
-                else if (map[pos.Y + 1, pos.X].Equals("."))
-                {
-                    Console.SetCursorPosition(pos.X, pos.Y);
-                    Console.Write(tempSpot);
-                    map[pos.Y, pos.X] = tempSpot;
-                    tempSpot = map[pos.Y + 1, pos.X];
-                    map[pos.Y + 1, pos.X] = symbol;
-                    Console.SetCursorPosition(pos.X, pos.Y + 1);
-                    pos.Y += 1;
-                    Console.Write(symbol);
-                }
-            }
-            else
-            {
-                RandomMove(map);
-            }
+            }            
         }
 
         Boolean CanSeePlayer(Player p, String[,] map)
@@ -193,7 +203,7 @@ namespace FogueLike
             {
                 for (int i = difX; i > 0; i--)
                 {
-                    if (!(map[j, i].Equals("."))) // TODO: Make sure we are using j/i in the right order.
+                    if (!(map[j, i].Equals("."))) // TODO: Make sure we are using j/i in the right order. Pretty sure we are.
                     {
                         return false;
                     }
@@ -201,89 +211,81 @@ namespace FogueLike
             }
 
             return true;
-        }
+        } // TODO: We can condense this into the above if statement where this function is called.
 
         void RandomMove(String[,] m)
         {
-            Random r = new Random();
-            int n = r.Next(0, 6);
-            if (n == 0)
-            {
-                pos.X = pos.X;
-                pos.Y = pos.Y;
-            }
-            if (n == 1)
-            {
-                pos.X = pos.X;
-                pos.Y = pos.Y;
-            }
-            if (n == 2)
-            {
-                pos.X = pos.X;
-                pos.Y = pos.Y;
-            }
-            if (n == 3 && m[pos.Y, pos.X + 1].Equals(".")) // TODO: The position of entities is not being updated when we change it here. I think.
+            int n = r.Next(0, 7);
+            if (n == 3 && passable.Contains(m[pos.Y, pos.X + 1])) // TODO: The position of entities is not being updated when we change it here. I think.
             {
                 Console.SetCursorPosition(pos.X, pos.Y);
                 Console.Write(tempSpot);
 
                 tempSpot = m[pos.Y, pos.X + 1];
+                tempPos.X = pos.X;
                 pos.X += 1;
-                tempPos.X -= 1;
 
                 Console.SetCursorPosition(pos.X, pos.Y);
                 Console.Write(symbol);
             }
-            if (n == 4 && m[pos.Y, pos.X - 1].Equals("."))
+            if (n == 4 && passable.Contains(m[pos.Y, pos.X - 1]))
             {
                 Console.SetCursorPosition(pos.X, pos.Y);
                 Console.Write(tempSpot);
 
                 tempSpot = m[pos.Y, pos.X - 1];
+                tempPos.X = pos.X;
                 pos.X -= 1;
-                tempPos.X += 1;
 
                 Console.SetCursorPosition(pos.X, pos.Y);
                 Console.Write(symbol);
             }
-            if (n == 5 && m[pos.Y + 1, pos.X].Equals("."))
+            if (n == 5 && passable.Contains(m[pos.Y + 1, pos.X]))
             {
                 Console.SetCursorPosition(pos.X, pos.Y);
                 Console.Write(tempSpot);
+
                 tempSpot = m[pos.Y + 1, pos.X];
+                tempPos.Y = pos.Y;
                 pos.Y += 1;
-                tempPos.Y -= 1;
+                
                 Console.SetCursorPosition(pos.X, pos.Y);
                 Console.Write(symbol);
             }
-            if (n == 6 && m[pos.Y - 1, pos.X].Equals("."))
+            if (n == 6 && passable.Contains(m[pos.Y - 1, pos.X]))
             {
                 Console.SetCursorPosition(pos.X, pos.Y);
                 Console.Write(tempSpot);
+
                 tempSpot = m[pos.Y - 1, pos.X];
+                tempPos.Y = pos.Y;
                 pos.Y -= 1;
-                tempPos.Y += 1;
+                
                 Console.SetCursorPosition(pos.X, pos.Y);
                 Console.Write(symbol);
             }
         }
 
-        public void decHP(Item i) // TODO: Make it where we are decreasing HP by all equipped items by a thing instead of just 1 item.
+        public int decHP(Item i) // TODO: Make it where we are decreasing HP by all equipped items by a thing instead of just 1 item.
         {
-            hp -= i.getATK();
+            int hitFor = i.getATK();
+            hp -= hitFor;
             if (hp <= 0)
             {
                 symbol = "x";
             }
+            return hitFor;
         }
 
-        public void Attack(Player p)
+        public int Attack(Player p)
         {
             Random r = new Random();
+            int hit = 0;
             if (r.Next(0, 100) > missChance)
             {
-                p.DecHP(atk);
+                hit = p.DecHP(atk);
             }
+            return hit;
         }
 
         public void Attack(Entity e)

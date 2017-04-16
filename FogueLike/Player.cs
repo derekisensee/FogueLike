@@ -65,9 +65,10 @@ namespace FogueLike
             position.Y = 20;
         }
 
-        public void DecHP(int atk)
+        public int DecHP(int atk)
         {
             currentHP -= atk;
+            return atk;
         }
 
         public int GetMaxHP() { return maxHP; }
