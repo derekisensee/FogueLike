@@ -16,11 +16,15 @@ namespace FogueLike
         int speed;
 
         public Point pos;
+        public Point tempPos;
+
         List<Item> inventory;
         List<Item> equipped;
         int missChance;
 
         string tempSpot;
+
+        //String[,] map;
 
         public string Symbol { get => symbol; set => symbol = value; }
         public int Hp { get => hp; set => hp = value; }
@@ -63,7 +67,8 @@ namespace FogueLike
             missChance = 50;
             atk = 5;
             speed = 30;
-            tempSpot = t;
+            tempSpot = ".";
+            tempPos.X = x; tempPos.Y = y;
 
             inventory = new List<Item>();
             equipped = new List<Item>();
@@ -77,6 +82,11 @@ namespace FogueLike
 
         public void Decide(Player p, String[,] map)
         {
+            //Console.WriteLine(Map.Rank); // This says that our map is not a reference to an object...
+            if (map[pos.Y, pos.X - 1].Equals("@") || map[pos.Y, pos.X + 1].Equals("@") || map[pos.Y - 1, pos.X].Equals("@") || map[pos.Y + 1, pos.X].Equals("@"))
+            {
+                Attack(p);
+            }
             if (CanSeePlayer(p, map))
             {
                 int startX = pos.X;
@@ -84,44 +94,56 @@ namespace FogueLike
                 int endX = p.position.X;
                 int endY = p.position.Y;
                 int difX; int difY;
-                if (startX > endX) // TODO: Reprint the entity locations. Figure out what is going on here.
+                if (startX > endX && map[pos.Y, pos.X - 1].Equals(".")) // TODO: Reprint the entity locations. Figure out what is going on here.
                 {
                     Console.SetCursorPosition(pos.X, pos.Y);
                     Console.Write(tempSpot);
+
+                    map[pos.Y, pos.X] = tempSpot;
                     tempSpot = map[pos.Y, pos.X - 1];
+                    map[pos.Y, pos.X - 1] = symbol;
+
                     Console.SetCursorPosition(pos.X - 1, pos.Y);
                     pos.X -= 1;
                     Console.Write(symbol);
                 }
-                else
+                else if (map[pos.Y, pos.X + 1].Equals("."))
                 {
                     Console.SetCursorPosition(pos.X, pos.Y);
                     Console.Write(tempSpot);
+                    map[pos.Y, pos.X] = tempSpot;
                     tempSpot = map[pos.Y, pos.X + 1];
+                    map[pos.Y, pos.X + 1] = symbol;
                     Console.SetCursorPosition(pos.X + 1, pos.Y);
                     pos.X += 1;
                     Console.Write(symbol);
                 }
-                if (startY > endY)
+                else if (startY > endY && map[pos.Y - 1, pos.X].Equals("."))
                 {
                     Console.SetCursorPosition(pos.X, pos.Y);
                     Console.Write(tempSpot);
+                    map[pos.Y, pos.X] = tempSpot;
                     tempSpot = map[pos.Y - 1, pos.X];
+                    map[pos.Y - 1, pos.X] = symbol;
                     Console.SetCursorPosition(pos.X, pos.Y - 1);
                     pos.Y -= 1;
                     Console.Write(symbol);
                 }
-                else
+                else if (map[pos.Y + 1, pos.X].Equals("."))
                 {
                     Console.SetCursorPosition(pos.X, pos.Y);
                     Console.Write(tempSpot);
+                    map[pos.Y, pos.X] = tempSpot;
                     tempSpot = map[pos.Y + 1, pos.X];
+                    map[pos.Y + 1, pos.X] = symbol;
                     Console.SetCursorPosition(pos.X, pos.Y + 1);
                     pos.Y += 1;
                     Console.Write(symbol);
                 }
-
-                
+            }
+            else
+            {
+                RandomMove(map);
             }
         }
 
@@ -179,6 +201,71 @@ namespace FogueLike
             }
 
             return true;
+        }
+
+        void RandomMove(String[,] m)
+        {
+            Random r = new Random();
+            int n = r.Next(0, 6);
+            if (n == 0)
+            {
+                pos.X = pos.X;
+                pos.Y = pos.Y;
+            }
+            if (n == 1)
+            {
+                pos.X = pos.X;
+                pos.Y = pos.Y;
+            }
+            if (n == 2)
+            {
+                pos.X = pos.X;
+                pos.Y = pos.Y;
+            }
+            if (n == 3 && m[pos.Y, pos.X + 1].Equals(".")) // TODO: The position of entities is not being updated when we change it here. I think.
+            {
+                Console.SetCursorPosition(pos.X, pos.Y);
+                Console.Write(tempSpot);
+
+                tempSpot = m[pos.Y, pos.X + 1];
+                pos.X += 1;
+                tempPos.X -= 1;
+
+                Console.SetCursorPosition(pos.X, pos.Y);
+                Console.Write(symbol);
+            }
+            if (n == 4 && m[pos.Y, pos.X - 1].Equals("."))
+            {
+                Console.SetCursorPosition(pos.X, pos.Y);
+                Console.Write(tempSpot);
+
+                tempSpot = m[pos.Y, pos.X - 1];
+                pos.X -= 1;
+                tempPos.X += 1;
+
+                Console.SetCursorPosition(pos.X, pos.Y);
+                Console.Write(symbol);
+            }
+            if (n == 5 && m[pos.Y + 1, pos.X].Equals("."))
+            {
+                Console.SetCursorPosition(pos.X, pos.Y);
+                Console.Write(tempSpot);
+                tempSpot = m[pos.Y + 1, pos.X];
+                pos.Y += 1;
+                tempPos.Y -= 1;
+                Console.SetCursorPosition(pos.X, pos.Y);
+                Console.Write(symbol);
+            }
+            if (n == 6 && m[pos.Y - 1, pos.X].Equals("."))
+            {
+                Console.SetCursorPosition(pos.X, pos.Y);
+                Console.Write(tempSpot);
+                tempSpot = m[pos.Y - 1, pos.X];
+                pos.Y -= 1;
+                tempPos.Y += 1;
+                Console.SetCursorPosition(pos.X, pos.Y);
+                Console.Write(symbol);
+            }
         }
 
         public void decHP(Item i) // TODO: Make it where we are decreasing HP by all equipped items by a thing instead of just 1 item.

@@ -14,7 +14,7 @@ namespace FogueLike
         List<String[,]> currentWorld; // List of maps.
         List<String> symbols; // This is for things we can attack.
         List<String> passable; // This is for things we can walk over.
-        Dictionary<String, Entity> entities;
+        List<Dictionary<String, Entity>> entities;
         int worldNum;
         int entID;
         Random r = new Random();
@@ -22,7 +22,7 @@ namespace FogueLike
         public List<string> Passable { get => passable; set => passable = value; }
         public List<string> Symbols { get => symbols; set => symbols = value; }
         public List<string[,]> CurrentWorld { get => currentWorld; set => currentWorld = value; }
-        public Dictionary<string, Entity> Entities { get => entities; set => entities = value; }
+        //public Dictionary<string, Entity> Entities { get => entities; set => entities = value; }
         //public string[,] Map { get => map; set => map = value; }
         public Player P { get => p; set => p = value; }
         public int WorldNum { get => worldNum; set => worldNum = value; }
@@ -32,7 +32,7 @@ namespace FogueLike
             Map = new String[y, 150];
             p = new Player();
             currentWorld = new List<String[,]>();
-            entities = new Dictionary<string, Entity>();
+            entities = new List<Dictionary<string, Entity>>();
             worldNum = 0;
             entID = 0;
 
@@ -41,10 +41,18 @@ namespace FogueLike
             symbols = new List<String>();
             symbols.Add("g");
 
-            int floors = 5;
-            while (floors-- > 0) {
-                CurrentWorld.Add(WorldGen(y));
+            Dictionary<String, Entity> floorEnts = new Dictionary<String, Entity>();
+            entities.Add(floorEnts);
+            entities.Add(floorEnts);
+            entities.Add(floorEnts);
+            entities.Add(floorEnts);
+            entities.Add(floorEnts);
+
+            int floors = -1;
+            while (floors++ < 4) {
+                CurrentWorld.Add(WorldGen(y, floors)); // TODO: This is not adding to the correct array.
             }
+
             Map = CurrentWorld[worldNum];
             SpawnPlayer();
             PrintMap();
@@ -69,6 +77,7 @@ namespace FogueLike
                     PlacePlayer();
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write("@");
+                    WorldStep();
                 }
                 if (c.Key == ConsoleKey.DownArrow && (passable.Contains(Map[p.position.Y + 1, p.position.X]) || Map[p.position.Y + 1, p.position.X].Equals(">") || Map[p.position.Y + 1, p.position.X].Equals("<")))
                 {
@@ -80,6 +89,7 @@ namespace FogueLike
                     PlacePlayer();
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write("@");
+                    WorldStep();
                 }
                 if (c.Key == ConsoleKey.LeftArrow && (passable.Contains(Map[p.position.Y, p.position.X - 1]) || Map[p.position.Y, p.position.X - 1].Equals(">") || Map[p.position.Y, p.position.X - 1].Equals("<")))
                 {
@@ -91,6 +101,7 @@ namespace FogueLike
                     PlacePlayer();
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write("@");
+                    WorldStep();
                 }
                 if (c.Key == ConsoleKey.RightArrow && (passable.Contains(Map[p.position.Y, p.position.X + 1]) || Map[p.position.Y, p.position.X + 1].Equals(">") || Map[p.position.Y, p.position.X + 1].Equals("<")))
                 {
@@ -102,13 +113,19 @@ namespace FogueLike
                     PlacePlayer();
                     Console.SetCursorPosition(p.position.X, p.position.Y);
                     Console.Write("@");
+                    WorldStep();
                 }
+                if (c.Key == ConsoleKey.OemPeriod)
+                {
+                    WorldStep();
+                }
+                
                 Console.SetCursorPosition(0, 0);
                 #endregion
                 #region Attack Stuff
                 if (c.Key == ConsoleKey.RightArrow && symbols.Contains(Map[p.position.Y, p.position.X + 1]))
                 {
-                    foreach (Entity s in entities.Values)
+                    foreach (Entity s in entities[worldNum].Values)
                     {
                         if (s.pos.X == p.position.X + 1 && s.pos.Y == p.position.Y)
                         {
@@ -128,7 +145,7 @@ namespace FogueLike
                 }
                 if (c.Key == ConsoleKey.LeftArrow && symbols.Contains(Map[p.position.Y, p.position.X - 1]))
                 {
-                    foreach (Entity s in entities.Values)
+                    foreach (Entity s in entities[worldNum].Values)
                     {
                         if (s.pos.X == p.position.X - 1 && s.pos.Y == p.position.Y)
                         {
@@ -148,7 +165,7 @@ namespace FogueLike
                 }
                 if (c.Key == ConsoleKey.DownArrow && symbols.Contains(Map[p.position.Y + 1, p.position.X]))
                 {
-                    foreach (Entity s in entities.Values)
+                    foreach (Entity s in entities[worldNum].Values)
                     {
                         if (s.pos.X == p.position.X && s.pos.Y == p.position.Y + 1)
                         {
@@ -168,7 +185,7 @@ namespace FogueLike
                 }
                 if (c.Key == ConsoleKey.UpArrow && symbols.Contains(Map[p.position.Y - 1, p.position.X]))
                 {
-                    foreach (Entity s in entities.Values)
+                    foreach (Entity s in entities[worldNum].Values)
                     {
                         if (s.pos.X == p.position.X && s.pos.Y == p.position.Y - 1)
                         {
@@ -217,17 +234,29 @@ namespace FogueLike
                 }
                 #endregion
 
-                foreach (Entity e in entities.Values)
+                if (c.Key == ConsoleKey.U)
                 {
-                    e.Decide(p, Map);
+                    Console.Clear();
+                    Console.WriteLine("UNITS");
+                    foreach (Entity e in entities[worldNum].Values)
+                    {
+                        Console.WriteLine(e.Symbol + "\t" + e.pos.X + " " + e.pos.Y + "\t" + worldNum);
+                    }
+                    ConsoleKeyInfo a = Console.ReadKey();
+                    do
+                    {
+                        // nothing!
+                    } while (a.Key != ConsoleKey.Escape);
+                    PrintMap();
                 }
-
+                PrintMap(); // This is more for debugging purposes, performance is too poor when this is uncommented.
+                
                 Console.SetCursorPosition(0, Map.GetLength(0));
                 Console.Write("HP:" + p.GetCurrentHP() + "/" + p.GetMaxHP());
             } while (c.Key != ConsoleKey.Escape);
         }
 
-        public void SpawnPlayer() // TODO: Split this up, have seperate method that initally places player, and make this one the one that spawns entities.
+        public void SpawnPlayer() 
         {
             // Place the player.
             Boolean playerPlaced = false;
@@ -252,7 +281,7 @@ namespace FogueLike
         }
 
         #region World Generation Stuffs
-        String[,] WorldGen(int y)
+        String[,] WorldGen(int y, int floor)
         {
             String[,] tempMap = new String[y, 150];
             // Fill the entire map.
@@ -358,7 +387,7 @@ namespace FogueLike
             } while (upStairPlaced == false);
 
             #region Entity Spawning
-            int numEnts = r.Next(8, 10);
+            int numEnts = r.Next(2, 8);
             while (numEnts-- > 0)
             {
                 Boolean placed = false;
@@ -370,8 +399,8 @@ namespace FogueLike
                     {
                         placed = true;
                         Entity e = new Entity(xVal, yVal, Map[yVal, xVal]);
-                        Entities.Add(entID + "", e);
-                        tempMap[yVal, xVal] = Entities[entID + ""].Symbol;
+                        entities[floor].Add(entID + "", e);
+                        tempMap[yVal, xVal] = entities[floor][entID + ""].Symbol; // I think we might be getting issues here?
                         entID++;
                     }
                 } while (placed == false);
@@ -499,9 +528,11 @@ namespace FogueLike
 
         void WorldStep()
         {
-            foreach (Entity s in entities.Values)
+            foreach (Entity e in entities[worldNum].Values)
             {
-                s.Decide(p, Map);
+                e.Decide(p, Map);
+                Map[e.pos.Y, e.pos.X] = "g";
+                Map[e.tempPos.Y, e.tempPos.X] = e.TempSpot;
             }
         }
     }
