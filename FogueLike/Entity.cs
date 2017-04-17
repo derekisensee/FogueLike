@@ -81,7 +81,7 @@ namespace FogueLike
             inventory = new List<Item>();
             equipped = new List<Item>();
 
-            equipped.Add(new Item("sword", 5));
+            equipped.Add(new Item("/", "sword", 5, 0));
 
             pos = new Point();
             pos.X = x;

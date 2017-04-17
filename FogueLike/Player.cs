@@ -10,8 +10,8 @@ namespace FogueLike
     {
         int currentHP;
         int maxHP;
-        public List<Item> inventory;
-        public List<Item> equipped;
+        private List<Item> inventory;
+        private List<Item> equipped;
 
         public struct Point
         {
@@ -44,6 +44,11 @@ namespace FogueLike
         public List<Point> downStairPositions;
         public List<Point> upStairPositions;
 
+        public int CurrentHP { get => currentHP; set => currentHP = value; }
+        public int MaxHP { get => maxHP; set => maxHP = value; }
+        public List<Item> Inventory { get => inventory; set => inventory = value; }
+        public List<Item> Equipped { get => equipped; set => equipped = value; }
+
         public Player()
         {
             maxHP = 400;
@@ -51,7 +56,9 @@ namespace FogueLike
             inventory = new List<Item>();
             equipped = new List<Item>();
 
-            equipped.Add(new Item("fist", 5));
+            Item fist = new Item("\"", "fist", 5, 0);
+            
+            equipped.Add(fist);
 
             downStairPositions = new List<Point>();
             upStairPositions = new List<Point>();
@@ -70,9 +77,5 @@ namespace FogueLike
             currentHP -= atk;
             return atk;
         }
-
-        public int GetMaxHP() { return maxHP; }
-
-        public int GetCurrentHP() { return currentHP; }
     }
 }

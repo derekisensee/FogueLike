@@ -40,7 +40,7 @@ namespace FogueLike
             entID = 0;
 
             passable = new List<String>();
-            passable.Add("."); passable.Add("x");
+            passable.Add("."); passable.Add("x"); passable.Add("/");
             symbols = new List<String>();
             symbols.Add("g");
 
@@ -53,15 +53,13 @@ namespace FogueLike
 
             int floors = -1;
             while (floors++ < 4) {
-                CurrentWorld.Add(WorldGen(y, floors)); // TODO: This is not adding to the correct array.
+                CurrentWorld.Add(WorldGen(y, floors));
             }
 
             Map = CurrentWorld[worldNum];
             SpawnPlayer();
             PrintMap();
-
-            /*Console.SetCursorPosition(0, Map.GetLength(0) + 1);
-            Console.WriteLine("Press J to travel up/down stairs. Press ESC to quit.");*/
+            
             ConsoleKeyInfo c;
             String tempSpot = "."; // holds the place of the last thing we step on.
 
@@ -133,7 +131,7 @@ namespace FogueLike
                         if (s.pos.X == p.position.X + 1 && s.pos.Y == p.position.Y)
                         {
                             Console.SetCursorPosition(0, Map.GetLength(0) + 1);
-                            int entDmg = s.decHP(p.equipped[0]);
+                            int entDmg = s.decHP(p.Equipped[0]);
                             log.Add("You hit for " + entDmg + " damage!");
                             Console.Write("You hit for " + entDmg + " damage!");
                             if (!(s.Symbol.Equals("x"))) // basically i don't want entities attacking back right away after player attacks, instead they should be attacking whenever WorldTurn deems it's okay for them to.
@@ -160,7 +158,7 @@ namespace FogueLike
                         if (s.pos.X == p.position.X - 1 && s.pos.Y == p.position.Y)
                         {
                             Console.SetCursorPosition(0, Map.GetLength(0) + 1);
-                            int entDmg = s.decHP(p.equipped[0]);
+                            int entDmg = s.decHP(p.Equipped[0]);
                             log.Add("You hit for " + entDmg + " damage!");
                             Console.Write("You hit for " + entDmg + " damage!");
                             if (!(s.Symbol.Equals("x")))
@@ -184,7 +182,7 @@ namespace FogueLike
                         if (s.pos.X == p.position.X && s.pos.Y == p.position.Y + 1)
                         {
                             Console.SetCursorPosition(0, Map.GetLength(0) + 1);
-                            int entDmg = s.decHP(p.equipped[0]);
+                            int entDmg = s.decHP(p.Equipped[0]);
                             log.Add("You hit for " + entDmg + " damage!");
                             Console.Write("You hit for " + entDmg + " damage!");
                             if (!(s.Symbol.Equals("x")))
@@ -208,7 +206,7 @@ namespace FogueLike
                         if (s.pos.X == p.position.X && s.pos.Y == p.position.Y - 1)
                         {
                             Console.SetCursorPosition(0, Map.GetLength(0) + 1);
-                            int entDmg = s.decHP(p.equipped[0]);
+                            int entDmg = s.decHP(p.Equipped[0]);
                             log.Add("You hit for " + entDmg + " damage!");
                             Console.Write("You hit for " + entDmg + " damage!");
                             if (!(s.Symbol.Equals("x")))
@@ -256,6 +254,29 @@ namespace FogueLike
                 }
                 #endregion
 
+                if (c.Key == ConsoleKey.I)
+                {
+                    Console.Clear();
+                    Console.WriteLine("EQUIPPED\nNAME\tATK\tDEF");
+                    foreach (Item i in p.Equipped)
+                    {
+                        Console.WriteLine(i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
+                    }
+                    Console.WriteLine();
+                    Console.WriteLine("INVENTORY\nNAME\tATK\tDEF");
+                    foreach (Item i in p.Inventory)
+                    {
+                        Console.WriteLine(i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
+                    }
+
+                    ConsoleKeyInfo a = Console.ReadKey();
+                    do
+                    {
+
+                    } while (a.Key != ConsoleKey.Escape);
+                    PrintMap();
+                }
+
                 if (c.Key == ConsoleKey.U)
                 {
                     Console.Clear();
@@ -267,20 +288,19 @@ namespace FogueLike
                     ConsoleKeyInfo a = Console.ReadKey();
                     do
                     {
-                        // nothing!
+
                     } while (a.Key != ConsoleKey.Escape);
                     PrintMap();
                 }
                 //PrintMap(); // This is more for debugging purposes, performance is too poor when this is uncommented.
                 
                 Console.SetCursorPosition(0, Map.GetLength(0));
-                Console.Write("HP:" + p.GetCurrentHP() + "/" + p.GetMaxHP());
+                Console.Write("HP:" + p.CurrentHP + "/" + p.MaxHP);
             } while (c.Key != ConsoleKey.Escape);
         }
 
         public void SpawnPlayer() 
         {
-            // Place the player.
             Boolean playerPlaced = false;
             do
             {
@@ -556,7 +576,7 @@ namespace FogueLike
                 Map[e.tempPos.Y, e.tempPos.X] = e.TempSpot;
                 Map[e.pos.Y, e.pos.X] = "g";
             }
-            //HACK: DIRTY HACK
+            // HACK: DIRTY HACK
             #region HACK
             // Since I couldn't figure out what was making "ghost" symbols I made us go through the whole board, looking for "g"'s, and if we find one see if it's position is in the entity list, if not then delete.
             for (int i = 0; i < Map.GetLength(0); i++)

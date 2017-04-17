@@ -7,13 +7,22 @@ namespace FogueLike
 {
     public class Item
     {
-        String name;
+        string name;
+        string symbol;
         int atk;
+        int def;
 
-        public Item(String n, int a)
+        public string Name { get => name; set => name = value; }
+        public string Symbol { get => symbol; set => symbol = value; }
+        public int Atk { get => atk; set => atk = value; }
+        public int Def { get => def; set => def = value; }
+
+        public Item(String s, String n, int a, int d)
         {
+            symbol = s;
             name = n;
             atk = a;
+            def = 0;
         }
 
         public int getATK()
