@@ -13,7 +13,6 @@ C:\Users\derek_000\Source\Repos\FogueLike\FogueLike\bin\Debug\FogueLike.pdb
 C:\Users\derek_000\Source\Repos\FogueLike\FogueLike\obj\Debug\FogueLike.csprojResolveAssemblyReference.cache
 C:\Users\derek_000\Source\Repos\FogueLike\FogueLike\obj\Debug\FogueLike.exe
 C:\Users\derek_000\Source\Repos\FogueLike\FogueLike\obj\Debug\FogueLike.pdb
-C:\Users\isenseed\Documents\Visual Studio 2017\Projects\FogueLike\FogueLike\obj\Debug\FogueLike.csprojResolveAssemblyReference.cache
 C:\Users\isenseed\Documents\Visual Studio 2017\Projects\FogueLike\FogueLike\obj\Debug\FogueLike.exe
 C:\Users\isenseed\Documents\Visual Studio 2017\Projects\FogueLike\FogueLike\obj\Debug\FogueLike.pdb
 C:\Users\isenseed\Documents\Visual Studio 2017\Projects\FogueLike\FogueLike\bin\Debug\FogueLike.exe

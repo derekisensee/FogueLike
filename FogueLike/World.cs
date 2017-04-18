@@ -130,16 +130,18 @@ namespace FogueLike
                     {
                         if (s.pos.X == p.position.X + 1 && s.pos.Y == p.position.Y)
                         {
-                            Console.SetCursorPosition(0, Map.GetLength(0) + 1);
-                            int entDmg = s.decHP(p.Equipped[0]);
-                            log.Add("You hit for " + entDmg + " damage!");
-                            Console.Write("You hit for " + entDmg + " damage!");
                             if (!(s.Symbol.Equals("x"))) // basically i don't want entities attacking back right away after player attacks, instead they should be attacking whenever WorldTurn deems it's okay for them to.
                             {
+                                Console.SetCursorPosition(0, Map.GetLength(0) + 1);
+                                int entDmg = s.decHP(p.Equipped[0]);
+                                log.Add("You hit for " + entDmg + " damage!");
+                                Console.Write("You hit for " + entDmg + " damage! ");
+
                                 int pDmg = s.Attack(p);
-                                Console.WriteLine("The " + s.Symbol + " hits you for " + pDmg + " damage!");
+                                string l = "The " + s.Symbol + " hits you for " + pDmg + " damage!";
+                                log.Add(l);
+                                Console.WriteLine(l);
                             }
-                            //if (s.Symbol.Equals("x"))
                             else
                             {
                                 Map[p.position.Y, p.position.X + 1] = s.Symbol;
@@ -156,15 +158,18 @@ namespace FogueLike
                     foreach (Entity s in entities[worldNum].Values)
                     {
                         if (s.pos.X == p.position.X - 1 && s.pos.Y == p.position.Y)
-                        {
-                            Console.SetCursorPosition(0, Map.GetLength(0) + 1);
-                            int entDmg = s.decHP(p.Equipped[0]);
-                            log.Add("You hit for " + entDmg + " damage!");
-                            Console.Write("You hit for " + entDmg + " damage!");
+                        {                            
                             if (!(s.Symbol.Equals("x")))
                             {
+                                Console.SetCursorPosition(0, Map.GetLength(0) + 1);
+                                int entDmg = s.decHP(p.Equipped[0]);
+                                log.Add("You hit for " + entDmg + " damage!");
+                                Console.Write("You hit for " + entDmg + " damage! ");
+
                                 int pDmg = s.Attack(p);
-                                Console.WriteLine("The " + s.Symbol + " hits you for " + pDmg + " damage!");
+                                string l = "The " + s.Symbol + " hits you for " + pDmg + " damage!";
+                                log.Add(l);
+                                Console.WriteLine(l);
                             }
                             else
                             {
@@ -181,14 +186,17 @@ namespace FogueLike
                     {
                         if (s.pos.X == p.position.X && s.pos.Y == p.position.Y + 1)
                         {
-                            Console.SetCursorPosition(0, Map.GetLength(0) + 1);
-                            int entDmg = s.decHP(p.Equipped[0]);
-                            log.Add("You hit for " + entDmg + " damage!");
-                            Console.Write("You hit for " + entDmg + " damage!");
                             if (!(s.Symbol.Equals("x")))
                             {
+                                Console.SetCursorPosition(0, Map.GetLength(0) + 1);
+                                int entDmg = s.decHP(p.Equipped[0]);
+                                log.Add("You hit for " + entDmg + " damage!");
+                                Console.Write("You hit for " + entDmg + " damage! ");
+
                                 int pDmg = s.Attack(p);
-                                Console.WriteLine("The " + s.Symbol + " hits you for " + pDmg + " damage!");
+                                string l = "The " + s.Symbol + " hits you for " + pDmg + " damage!";
+                                log.Add(l);
+                                Console.WriteLine(l);
                             }
                             else
                             {
@@ -204,15 +212,18 @@ namespace FogueLike
                     foreach (Entity s in entities[worldNum].Values)
                     {
                         if (s.pos.X == p.position.X && s.pos.Y == p.position.Y - 1)
-                        {
-                            Console.SetCursorPosition(0, Map.GetLength(0) + 1);
-                            int entDmg = s.decHP(p.Equipped[0]);
-                            log.Add("You hit for " + entDmg + " damage!");
-                            Console.Write("You hit for " + entDmg + " damage!");
+                        {                            
                             if (!(s.Symbol.Equals("x")))
                             {
+                                Console.SetCursorPosition(0, Map.GetLength(0) + 1);
+                                int entDmg = s.decHP(p.Equipped[0]);
+                                log.Add("You hit for " + entDmg + " damage! ");
+                                Console.Write("You hit for " + entDmg + " damage!");
+
                                 int pDmg = s.Attack(p);
-                                Console.WriteLine("The " + s.Symbol + " hits you for " + pDmg + " damage!");
+                                string l = "The " + s.Symbol + " hits you for " + pDmg + " damage!";
+                                log.Add(l);
+                                Console.WriteLine(l);
                             }
                             else
                             {
@@ -253,27 +264,46 @@ namespace FogueLike
                     PrintMap();
                 }
                 #endregion
-
+                // inventory management
                 if (c.Key == ConsoleKey.I)
                 {
+                    int equippedItems = 0;
+                    int inventoryItems = 0;
+                    int position = 0;
+
                     Console.Clear();
                     Console.WriteLine("EQUIPPED\nNAME\tATK\tDEF");
                     foreach (Item i in p.Equipped)
                     {
                         Console.WriteLine(i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
+                        equippedItems++;
                     }
                     Console.WriteLine();
                     Console.WriteLine("INVENTORY\nNAME\tATK\tDEF");
                     foreach (Item i in p.Inventory)
                     {
                         Console.WriteLine(i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
+                        inventoryItems++;
                     }
 
-                    ConsoleKeyInfo a = Console.ReadKey();
+                    ConsoleKeyInfo a;
                     do
-                    {
-
+                    { // TODO: Implement this sick filth
+                        a = Console.ReadKey();
+                        if (a.Key == ConsoleKey.UpArrow)
+                        {
+                            Console.SetCursorPosition(0, --position);
+                        }
+                        if (a.Key == ConsoleKey.DownArrow)
+                        {
+                            Console.SetCursorPosition(0, ++position);
+                        }
+                        if (a.Key == ConsoleKey.Enter)
+                        {
+                            // switch to equipped/inventory
+                        }
                     } while (a.Key != ConsoleKey.Escape);
+                    Console.Clear();
                     PrintMap();
                 }
 
@@ -292,8 +322,24 @@ namespace FogueLike
                     } while (a.Key != ConsoleKey.Escape);
                     PrintMap();
                 }
+
+                if (c.Key == ConsoleKey.L)
+                {
+                    Console.Clear();
+                    Console.WriteLine("LOG");
+                    foreach (string s in log)
+                    {
+                        Console.WriteLine(s);
+                    }
+                    ConsoleKeyInfo a = Console.ReadKey();
+                    do
+                    {
+
+                    } while (a.Key != ConsoleKey.Escape);
+                    PrintMap();
+                }
                 //PrintMap(); // This is more for debugging purposes, performance is too poor when this is uncommented.
-                
+
                 Console.SetCursorPosition(0, Map.GetLength(0));
                 Console.Write("HP:" + p.CurrentHP + "/" + p.MaxHP);
             } while (c.Key != ConsoleKey.Escape);

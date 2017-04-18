@@ -9,7 +9,6 @@ namespace FogueLike
 {
     public class Entity
     {
-        String id;
         String symbol;
         int hp;
         int atk;
@@ -27,7 +26,7 @@ namespace FogueLike
 
         string tempSpot;
 
-        //String[,] map;
+        private int wait;
 
         public string Symbol { get => symbol; set => symbol = value; }
         public int Hp { get => hp; set => hp = value; }
@@ -73,6 +72,8 @@ namespace FogueLike
             tempSpot = ".";
             tempPos.X = x; tempPos.Y = y;
 
+            wait = 0;
+
             r = new Random();
 
             passable = new List<String>();
@@ -90,13 +91,14 @@ namespace FogueLike
 
         public void Decide(Player p, String[,] map)
         {
-            if (!(symbol.Equals("x")))
+            if (!(symbol.Equals("x")) && wait-- <= 0)
             {
                 if (map[pos.Y, pos.X - 1].Equals("@") || map[pos.Y, pos.X + 1].Equals("@") || map[pos.Y - 1, pos.X].Equals("@") || map[pos.Y + 1, pos.X].Equals("@"))
                 {
                     Attack(p);
+                    wait += 3;
                 }
-                if (CanSeePlayer(p, map))
+                else if (CanSeePlayer(p, map))
                 {
                     int startX = pos.X;
                     int startY = pos.Y;
