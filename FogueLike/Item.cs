@@ -22,7 +22,7 @@ namespace FogueLike
             symbol = s;
             name = n;
             atk = a;
-            def = 0;
+            def = d;
         }
 
         public int getATK()

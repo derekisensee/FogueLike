@@ -275,21 +275,27 @@ namespace FogueLike
                     Console.WriteLine("EQUIPPED\nNAME\tATK\tDEF");
                     foreach (Item i in p.Equipped)
                     {
-                        Console.WriteLine(i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
+                        Console.WriteLine(equippedItems + " " + i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
                         equippedItems++;
                     }
                     Console.WriteLine();
                     Console.WriteLine("INVENTORY\nNAME\tATK\tDEF");
                     foreach (Item i in p.Inventory)
                     {
-                        Console.WriteLine(i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
+                        Console.WriteLine(inventoryItems + " " + i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
                         inventoryItems++;
                     }
 
+                    Boolean equipSwitch = false;
+
                     ConsoleKeyInfo a;
                     do
-                    { // TODO: Implement this sick filth
+                    {
                         a = Console.ReadKey();
+                        if (a.Key == ConsoleKey.Tab)
+                        {
+                            equipSwitch = equipSwitch;
+                        }
                         if (a.Key == ConsoleKey.UpArrow)
                         {
                             Console.SetCursorPosition(0, --position);
@@ -300,7 +306,7 @@ namespace FogueLike
                         }
                         if (a.Key == ConsoleKey.Enter)
                         {
-                            // switch to equipped/inventory
+                            if ()
                         }
                     } while (a.Key != ConsoleKey.Escape);
                     Console.Clear();

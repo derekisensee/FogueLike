@@ -59,6 +59,7 @@ namespace FogueLike
             Item fist = new Item("\"", "fist", 5, 0);
             
             equipped.Add(fist);
+            inventory.Add(new Item("\\", "sword", 10, 2));
 
             downStairPositions = new List<Point>();
             upStairPositions = new List<Point>();
