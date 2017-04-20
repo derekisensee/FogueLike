@@ -267,12 +267,12 @@ namespace FogueLike
                 #region Inventory Management
                 if (c.Key == ConsoleKey.I)
                 {
+                    // This is for the maximum selected item index spot we can choose.
                     int equippedItems = 0;
                     int inventoryItems = 0;
-                    int position = 0;
 
                     Console.Clear();
-                    Console.WriteLine("EQUIPPED\nNAME\tATK\tDEF");
+                    Console.WriteLine("\nEQUIPPED\nNAME\tATK\tDEF");
                     foreach (Item i in p.Equipped)
                     {
                         Console.WriteLine(equippedItems + " " + i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
@@ -290,31 +290,50 @@ namespace FogueLike
                     int selectedInv = 0;
                     int selectedEqu = 0;
 
+                    Console.SetCursorPosition(0, 0);
+                    Console.Write("EQUIPPED SELECTED " + selectedEqu);
+                    
                     ConsoleKeyInfo a;
                     do
                     {
                         a = Console.ReadKey();
                         if (equipSwitch)
                         {
-                            Console.WriteLine("INVENTORY SELECTED " + selectedInv);
+                            Console.SetCursorPosition(0, 0);
+                            Console.Write("INVENTORY SELECTED " + selectedInv);
                         }
                         else
                         {
-                            Console.WriteLine("EQUIPPED SELECTED " + selectedEqu);
+                            Console.SetCursorPosition(0, 0);
+                            Console.Write("EQUIPPED SELECTED " + selectedEqu);
                         }
                         if (a.Key == ConsoleKey.Tab)
                         {
                             equipSwitch = !equipSwitch;
+                            if (equipSwitch)
+                            {
+                                Console.SetCursorPosition(0, 0);
+                                Console.Write("INVENTORY SELECTED " + selectedInv);
+                            }
+                            else
+                            {
+                                Console.SetCursorPosition(0, 0);
+                                Console.Write("EQUIPPED SELECTED " + selectedEqu);
+                            }
                         }
                         if (a.Key == ConsoleKey.DownArrow)
                         {
                             if (equipSwitch && selectedInv - 1 >= 0)
                             {
                                 selectedInv--;
+                                Console.SetCursorPosition(0, 0);
+                                Console.Write("INVENTORY SELECTED " + selectedInv);
                             }
                             else if (selectedEqu - 1 >= 0)
                             {
                                 selectedEqu--;
+                                Console.SetCursorPosition(0, 0);
+                                Console.Write("EQUIPPED SELECTED " + selectedEqu);
                             }
                         }
                         if (a.Key == ConsoleKey.UpArrow)
@@ -336,7 +355,7 @@ namespace FogueLike
                                 p.Inventory.Remove(toSwitch);
                                 p.Equipped.Add(toSwitch);
                                 Console.Clear();
-                                Console.WriteLine("EQUIPPED\nNAME\tATK\tDEF");
+                                Console.WriteLine("\nEQUIPPED\nNAME\tATK\tDEF");
                                 foreach (Item i in p.Equipped)
                                 {
                                     Console.WriteLine(equippedItems + " " + i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
@@ -356,7 +375,7 @@ namespace FogueLike
                                 p.Equipped.Remove(toSwitch);
                                 p.Inventory.Add(toSwitch);
                                 Console.Clear();
-                                Console.WriteLine("EQUIPPED\nNAME\tATK\tDEF");
+                                Console.WriteLine("\nEQUIPPED\nNAME\tATK\tDEF");
                                 foreach (Item i in p.Equipped)
                                 {
                                     Console.WriteLine(equippedItems + " " + i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);

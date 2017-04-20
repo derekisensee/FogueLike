@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FogueLike
 {
-    class Spells
+    class Spell
     {
         // IDEA from the CHRIS:
         // RAPTURE SPELL:

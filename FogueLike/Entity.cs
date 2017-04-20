@@ -104,8 +104,7 @@ namespace FogueLike
                     int startY = pos.Y;
                     int endX = p.position.X;
                     int endY = p.position.Y;
-                    int difX; int difY;
-                    if (startX > endX && passable.Contains(map[pos.Y, pos.X - 1])) // TODO: Reprint the entity locations. Figure out what is going on here.
+                    if (startX > endX && passable.Contains(map[pos.Y, pos.X - 1]))
                     {
                         Console.SetCursorPosition(pos.X, pos.Y);
                         Console.Write(tempSpot);
