@@ -264,7 +264,7 @@ namespace FogueLike
                     PrintMap();
                 }
                 #endregion
-                // inventory management
+                #region Inventory Management
                 if (c.Key == ConsoleKey.I)
                 {
                     int equippedItems = 0;
@@ -287,31 +287,95 @@ namespace FogueLike
                     }
 
                     Boolean equipSwitch = false;
+                    int selectedInv = 0;
+                    int selectedEqu = 0;
 
                     ConsoleKeyInfo a;
                     do
                     {
                         a = Console.ReadKey();
+                        if (equipSwitch)
+                        {
+                            Console.WriteLine("INVENTORY SELECTED " + selectedInv);
+                        }
+                        else
+                        {
+                            Console.WriteLine("EQUIPPED SELECTED " + selectedEqu);
+                        }
                         if (a.Key == ConsoleKey.Tab)
                         {
-                            equipSwitch = equipSwitch;
-                        }
-                        if (a.Key == ConsoleKey.UpArrow)
-                        {
-                            Console.SetCursorPosition(0, --position);
+                            equipSwitch = !equipSwitch;
                         }
                         if (a.Key == ConsoleKey.DownArrow)
                         {
-                            Console.SetCursorPosition(0, ++position);
+                            if (equipSwitch && selectedInv - 1 >= 0)
+                            {
+                                selectedInv--;
+                            }
+                            else if (selectedEqu - 1 >= 0)
+                            {
+                                selectedEqu--;
+                            }
+                        }
+                        if (a.Key == ConsoleKey.UpArrow)
+                        {
+                            if (equipSwitch && selectedInv + 1 < inventoryItems)
+                            {
+                                selectedInv++;
+                            }
+                            else if (selectedEqu + 1 < equippedItems)
+                            {
+                                selectedEqu++;
+                            }
                         }
                         if (a.Key == ConsoleKey.Enter)
                         {
-                            if ()
+                            if (equipSwitch)
+                            {
+                                Item toSwitch = p.Inventory[selectedInv];
+                                p.Inventory.Remove(toSwitch);
+                                p.Equipped.Add(toSwitch);
+                                Console.Clear();
+                                Console.WriteLine("EQUIPPED\nNAME\tATK\tDEF");
+                                foreach (Item i in p.Equipped)
+                                {
+                                    Console.WriteLine(equippedItems + " " + i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
+                                    equippedItems++;
+                                }
+                                Console.WriteLine();
+                                Console.WriteLine("INVENTORY\nNAME\tATK\tDEF");
+                                foreach (Item i in p.Inventory)
+                                {
+                                    Console.WriteLine(inventoryItems + " " + i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
+                                    inventoryItems++;
+                                }
+                            }
+                            else
+                            {
+                                Item toSwitch = p.Equipped[selectedEqu];
+                                p.Equipped.Remove(toSwitch);
+                                p.Inventory.Add(toSwitch);
+                                Console.Clear();
+                                Console.WriteLine("EQUIPPED\nNAME\tATK\tDEF");
+                                foreach (Item i in p.Equipped)
+                                {
+                                    Console.WriteLine(equippedItems + " " + i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
+                                    equippedItems++;
+                                }
+                                Console.WriteLine();
+                                Console.WriteLine("INVENTORY\nNAME\tATK\tDEF");
+                                foreach (Item i in p.Inventory)
+                                {
+                                    Console.WriteLine(inventoryItems + " " + i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
+                                    inventoryItems++;
+                                }                                
+                            }
                         }
                     } while (a.Key != ConsoleKey.Escape);
                     Console.Clear();
                     PrintMap();
                 }
+                #endregion
 
                 if (c.Key == ConsoleKey.U)
                 {
