@@ -341,10 +341,14 @@ namespace FogueLike
                             if (equipSwitch && selectedInv + 1 < inventoryItems)
                             {
                                 selectedInv++;
+                                Console.SetCursorPosition(0, 0);
+                                Console.Write("INVENTORY SELECTED " + selectedInv);
                             }
                             else if (selectedEqu + 1 < equippedItems)
                             {
                                 selectedEqu++;
+                                Console.SetCursorPosition(0, 0);
+                                Console.Write("EQUIPPED SELECTED " + selectedEqu);
                             }
                         }
                         if (a.Key == ConsoleKey.Enter)
@@ -354,41 +358,37 @@ namespace FogueLike
                                 Item toSwitch = p.Inventory[selectedInv];
                                 p.Inventory.Remove(toSwitch);
                                 p.Equipped.Add(toSwitch);
-                                Console.Clear();
-                                Console.WriteLine("\nEQUIPPED\nNAME\tATK\tDEF");
-                                foreach (Item i in p.Equipped)
-                                {
-                                    Console.WriteLine(equippedItems + " " + i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
-                                    equippedItems++;
-                                }
-                                Console.WriteLine();
-                                Console.WriteLine("INVENTORY\nNAME\tATK\tDEF");
-                                foreach (Item i in p.Inventory)
-                                {
-                                    Console.WriteLine(inventoryItems + " " + i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
-                                    inventoryItems++;
-                                }
                             }
                             else
                             {
                                 Item toSwitch = p.Equipped[selectedEqu];
                                 p.Equipped.Remove(toSwitch);
                                 p.Inventory.Add(toSwitch);
-                                Console.Clear();
-                                Console.WriteLine("\nEQUIPPED\nNAME\tATK\tDEF");
-                                foreach (Item i in p.Equipped)
-                                {
-                                    Console.WriteLine(equippedItems + " " + i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
-                                    equippedItems++;
-                                }
-                                Console.WriteLine();
-                                Console.WriteLine("INVENTORY\nNAME\tATK\tDEF");
-                                foreach (Item i in p.Inventory)
-                                {
-                                    Console.WriteLine(inventoryItems + " " + i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
-                                    inventoryItems++;
-                                }                                
                             }
+                            equippedItems = 0;
+                            inventoryItems = 0;
+
+                            Console.Clear();
+                            Console.WriteLine("\nEQUIPPED\nNAME\tATK\tDEF");
+                            foreach (Item i in p.Equipped)
+                            {
+                                Console.WriteLine(equippedItems + " " + i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
+                                equippedItems++;
+                            }
+                            Console.WriteLine();
+                            Console.WriteLine("INVENTORY\nNAME\tATK\tDEF");
+                            foreach (Item i in p.Inventory)
+                            {
+                                Console.WriteLine(inventoryItems + " " + i.Symbol + " " + i.Name + "\t" + i.Atk + "\t" + i.Def);
+                                inventoryItems++;
+                            }
+
+                            equipSwitch = false;
+                            selectedInv = 0;
+                            selectedEqu = 0;
+
+                            Console.SetCursorPosition(0, 0);
+                            Console.Write("EQUIPPED SELECTED " + selectedEqu);
                         }
                     } while (a.Key != ConsoleKey.Escape);
                     Console.Clear();
